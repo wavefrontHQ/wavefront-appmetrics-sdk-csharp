@@ -60,7 +60,7 @@ Otherwise, you can run all configured reports using the `ReportRunner` on `IMetr
   await metrics.ReportRunner.RunAllAsync();
 ```
 
-You can also use the `AppMetricsTaskScheduler` to schedule the reporting of metrics.
+Or you can use the `AppMetricsTaskScheduler` to schedule the reporting of metrics:
 
 ```
   var scheduler = new AppMetricsTaskScheduler(
