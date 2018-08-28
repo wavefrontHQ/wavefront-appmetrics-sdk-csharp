@@ -5,7 +5,7 @@ This package provides support for reporting metrics recorded by App Metrics to W
 ## Dependencies
   * .NET Standard (>= 2.0)
   * App.Metrics (>= 2.1.0)
-  * Wavefront.CSharp.SDK (>= 0.1.0) (https://github.com/wavefrontHQ/wavefront-csharp-sdk)
+  * Wavefront.CSharp.SDK (>= 0.2.0) (https://github.com/wavefrontHQ/wavefront-csharp-sdk)
 
 ## Usage
 
@@ -47,9 +47,6 @@ The Wavefront reporter has the following configuration options:
   * FlushInterval - the delay between reporting metrics.
 
 ### Running the reporter
-Enabling the Wavefront reporter will stop the default flushing behavior of the WavefrontSender.
-This allows all report scheduling to be handled via App Metrics.
-
 If you have an ASP.NET Core application, refer to this page
 (https://www.app-metrics.io/web-monitoring/aspnet-core/reporting/)
 for instructions on how to schedule reporting.
@@ -70,4 +67,23 @@ Or you can use the `AppMetricsTaskScheduler` to schedule the reporting of metric
       await Task.WhenAll(metrics.ReportRunner.RunAllAsync());
     });
   scheduler.Start();
+```
+
+### Wavefront-specific entities that you can report
+```
+  /* 
+   * Wavefront Delta Counter
+   * 
+   * Configure and instantiate using DeltaCounterOptions.Builder.
+   * Do not update option fields after instantiation.
+   */
+  var myDeltaCounter = DeltaCounterOptions
+    .Builder("myDeltaCounter")
+    .MeasurementUnit(Unit.Calls)
+    .Tags(new MetricTags("cluster", "us-west"))
+    .Build();
+
+  ...
+  metrics.Measure.Counter.Increment(myDeltaCounter);
+
 ```

@@ -15,8 +15,8 @@ namespace App.Metrics.Reporting.Wavefront
         }
 
         /// <summary>
-        ///     Gets or sets the Wavefront sender that handles the formatting and flushing of metrics
-        ///     to Wavefront, either via direct ingestion or the Wavefront Proxy Agent.
+        ///     Gets or sets the Wavefront sender that handles the formatting and flushing of
+        ///     metrics to Wavefront, either via direct ingestion or the Wavefront Proxy Agent.
         /// </summary>
         public IWavefrontSender WavefrontSender { get; set; }
 

@@ -11,7 +11,8 @@ namespace App.Metrics.Reporting.Wavefront.Builder
     public static class MetricsWavefrontReporterBuilder
     {
         /// <summary>
-        ///     Add the <see cref="WavefrontReporter" /> allowing metrics to be reported to Wavefront.
+        ///     Add the <see cref="WavefrontReporter" /> allowing metrics to be reported to
+        ///     Wavefront.
         /// </summary>
         /// <param name="metricReporterProviderBuilder">
         ///     The <see cref="IMetricsReportingBuilder" /> used to configure metrics reporters.
@@ -35,7 +36,8 @@ namespace App.Metrics.Reporting.Wavefront.Builder
         }
 
         /// <summary>
-        ///     Add the <see cref="WavefrontReporter" /> allowing metrics to be reported to Wavefront.
+        ///     Add the <see cref="WavefrontReporter" /> allowing metrics to be reported to
+        ///     Wavefront.
         /// </summary>
         /// <param name="metricReporterProviderBuilder">
         ///     The <see cref="IMetricsReportingBuilder" /> used to configure metrics reporters.
@@ -63,14 +65,15 @@ namespace App.Metrics.Reporting.Wavefront.Builder
         }
 
         /// <summary>
-        ///     Add the <see cref="WavefrontReporter" /> allowing metrics to be reported to Wavefront.
+        ///     Add the <see cref="WavefrontReporter" /> allowing metrics to be reported to
+        ///     Wavefront.
         /// </summary>
         /// <param name="metricReporterProviderBuilder">
         ///     The <see cref="IMetricsReportingBuilder" /> used to configure metrics reporters.
         /// </param>
         /// <param name="wavefrontSender">
-        ///     The <see cref="IWavefrontSender" /> that handles the formatting and flushing of metrics
-        ///     to Wavefront, either via direct ingestion or the Wavefront Proxy Agent.
+        ///     The <see cref="IWavefrontSender" /> that handles the formatting and flushing of
+        ///     metrics to Wavefront, either via direct ingestion or the Wavefront Proxy Agent.
         /// </param>
         /// <returns>
         ///     An <see cref="IMetricsBuilder" /> that can be used to further configure App Metrics.
@@ -95,14 +98,15 @@ namespace App.Metrics.Reporting.Wavefront.Builder
         }
 
         /// <summary>
-        ///     Add the <see cref="WavefrontReporter" /> allowing metrics to be reported to Wavefront.
+        ///     Add the <see cref="WavefrontReporter" /> allowing metrics to be reported to
+        ///     Wavefront.
         /// </summary>
         /// <param name="metricReporterProviderBuilder">
         ///     The <see cref="IMetricsReportingBuilder" /> used to configure metrics reporters.
         /// </param>
         /// <param name="wavefrontSender">
-        ///     The <see cref="IWavefrontSender" /> that handles the formatting and flushing of metrics
-        ///     to Wavefront, either via direct ingestion or the Wavefront Proxy Agent.
+        ///     The <see cref="IWavefrontSender" /> that handles the formatting and flushing of
+        ///     metrics to Wavefront, either via direct ingestion or the Wavefront Proxy Agent.
         /// </param>
         /// <param name="source">
         ///     The source of your metrics.

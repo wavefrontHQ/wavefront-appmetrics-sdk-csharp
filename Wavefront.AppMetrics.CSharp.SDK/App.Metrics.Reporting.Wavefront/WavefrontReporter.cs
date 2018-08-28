@@ -32,23 +32,19 @@ namespace App.Metrics.Reporting.Wavefront
             }
             if (options.WavefrontSender == null)
             {
-                throw new ArgumentNullException(nameof(MetricsReportingWavefrontOptions.WavefrontSender));
+                throw new ArgumentNullException(
+                    nameof(MetricsReportingWavefrontOptions.WavefrontSender));
             }
 
             wavefrontSender = options.WavefrontSender;
-
-            /*
-             * Since flushing will be handled via App Metrics' API, stop the Wavefront sender's
-             * default behavior of flushing on a regular interval.
-             */
-            wavefrontSender.DisableFlushingOnInterval();
 
             source = options.Source;
 
             if (options.FlushInterval < TimeSpan.Zero)
             {
                 throw new InvalidOperationException(
-                    $"{nameof(MetricsReportingWavefrontOptions.FlushInterval)} must not be less than zero");
+                    $"{nameof(MetricsReportingWavefrontOptions.FlushInterval)} " +
+                    "must not be less than zero");
             }
 
             Filter = options.Filter;
@@ -78,7 +74,9 @@ namespace App.Metrics.Reporting.Wavefront
         /// <param name="metricsData">The current snapshot of metrics.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>True if metrics were successfully flushed, false otherwise.</returns>
-        public async Task<bool> FlushAsync(MetricsDataValueSource metricsData, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> FlushAsync(
+            MetricsDataValueSource metricsData,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             Logger.Trace("Flushing metrics snapshot");
 
@@ -98,9 +96,11 @@ namespace App.Metrics.Reporting.Wavefront
 
         /// <summary>
         ///     Writes the specified <see cref="MetricsDataValueSource" /> to the configured
-        ///     <see cref="IWavefrontSender" /> and sends to Wavefront.
+        ///     <see cref="IWavefrontSender" />.
         /// </summary>
-        /// <param name="metricsData">The <see cref="MetricsDataValueSource" /> being written.</param>
+        /// <param name="metricsData">
+        ///     The <see cref="MetricsDataValueSource" /> being written.
+        /// </param>
         /// <param name="cancellationToken">The <see cref="CancellationToken" /></param>
         /// <returns>A <see cref="Task" /> representing the asynchronous write operation.</returns>
         private Task WriteAsync(
@@ -113,8 +113,6 @@ namespace App.Metrics.Reporting.Wavefront
             {
                 serializer.Serialize(writer, metricsData);
             }
-
-            wavefrontSender.Flush();
 
 #if NETSTANDARD1_6
             return Task.CompletedTask;
