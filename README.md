@@ -77,7 +77,7 @@ Or you can use the `AppMetricsTaskScheduler` to schedule the reporting of metric
    * Configure and instantiate using DeltaCounterOptions.Builder.
    * Do not update option fields after instantiation.
    */
-  var myDeltaCounter = DeltaCounterOptions
+  var myDeltaCounter = new DeltaCounterOptions
     .Builder("myDeltaCounter")
     .MeasurementUnit(Unit.Calls)
     .Tags(new MetricTags("cluster", "us-west"))
