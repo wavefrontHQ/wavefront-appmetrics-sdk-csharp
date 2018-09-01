@@ -7,10 +7,9 @@ using App.Metrics.Internal;
 using App.Metrics.Logging;
 using App.Metrics.Serialization;
 using App.Metrics.Formatters.Wavefront;
-using Wavefront.CSharp.SDK.DirectIngestion;
 using Wavefront.CSharp.SDK.Common;
-using Wavefront.CSharp.SDK.Integrations;
-using App.Metrics.Filtering;
+using System.Collections.Generic;
+using Wavefront.CSharp.SDK.Entities.Histograms;
 
 namespace App.Metrics.Reporting.Wavefront
 {
@@ -23,6 +22,7 @@ namespace App.Metrics.Reporting.Wavefront
 
         private readonly IWavefrontSender wavefrontSender;
         private readonly string source;
+        private readonly ISet<HistogramGranularity> histogramGranularities;
 
         public WavefrontReporter(MetricsReportingWavefrontOptions options)
         {
@@ -39,6 +39,20 @@ namespace App.Metrics.Reporting.Wavefront
             wavefrontSender = options.WavefrontSender;
 
             source = options.Source;
+
+            histogramGranularities = new HashSet<HistogramGranularity>();
+            if (options.ReportMinuteDistribution)
+            {
+                histogramGranularities.Add(HistogramGranularity.Minute);
+            }
+            if (options.ReportHourDistribution)
+            {
+                histogramGranularities.Add(HistogramGranularity.Hour);
+            }
+            if (options.ReportDayDistribution)
+            {
+                histogramGranularities.Add(HistogramGranularity.Day);
+            }
 
             if (options.FlushInterval < TimeSpan.Zero)
             {
@@ -76,7 +90,7 @@ namespace App.Metrics.Reporting.Wavefront
         /// <returns>True if metrics were successfully flushed, false otherwise.</returns>
         public async Task<bool> FlushAsync(
             MetricsDataValueSource metricsData,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             Logger.Trace("Flushing metrics snapshot");
 
@@ -109,7 +123,10 @@ namespace App.Metrics.Reporting.Wavefront
         {
             var serializer = new MetricSnapshotSerializer();
 
-            using (var writer = new MetricSnapshotWavefrontWriter(wavefrontSender, source))
+            using (var writer = new MetricSnapshotWavefrontWriter(
+                wavefrontSender,
+                source,
+                histogramGranularities))
             {
                 serializer.Serialize(writer, metricsData);
             }

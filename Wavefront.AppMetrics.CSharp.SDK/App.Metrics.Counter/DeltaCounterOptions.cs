@@ -15,6 +15,8 @@ namespace App.Metrics.Counter
     /// <seealso cref="CounterOptions" />
     public class DeltaCounterOptions : CounterOptions
     {
+        private static readonly string WavefrontMetricTypeTagValue = "deltaCounter";
+
         /// <summary>
         /// Builder for DeltaCounterOptions.
         /// </summary>
@@ -33,8 +35,7 @@ namespace App.Metrics.Counter
 
             public Builder(string name)
             {
-                // The Wavefront reporter identifies delta counters by a prefix on the metric name.
-                this.name = AddPrefix(name);
+                this.name = name;
 
                 // In order for delta values to be calculated correctly, the value must be reset
                 // every time the delta counter is reported.
@@ -105,7 +106,7 @@ namespace App.Metrics.Counter
 
             /// <summary>
             ///     Creates a new <see cref="DeltaCounterOptions"/> instance. In order for the
-            ///     delta counter to be reported correctly, the fields the new instance
+            ///     delta counter to be reported correctly, the fields for the new instance
             ///     should not be changed after the instance is created.
             /// </summary>
             /// <returns>A new <see cref="DeltaCounterOptions"/></returns>
@@ -133,7 +134,8 @@ namespace App.Metrics.Counter
                     options.ReportSetItems = reportSetItems.Value;
                 }
 
-                options.Tags = tags;
+                options.Tags = MetricTags.Concat(tags, new MetricTags(
+                    WavefrontConstants.WavefrontMetricTypeTagKey, WavefrontMetricTypeTagValue));
 
                 return options;
             }
@@ -144,36 +146,17 @@ namespace App.Metrics.Counter
         }
 
         /// <summary>
-        ///     Determines whether or not a metric name is in the format of a delta counter.
+        ///     Determines whether or not a metric is in the format of a delta counter by
+        ///     looking for a particular metric tag.
         /// </summary>
         /// <returns>
-        ///     <c>true</c>, if the name identifies a delta counter, <c>false</c> otherwise.
+        ///     <c>true</c>, if the tags identify a delta counter, <c>false</c> otherwise.
         /// </returns>
-        /// <param name="name">The metric name.</param>
-        public static bool IsDeltaCounter(string name)
+        /// <param name="tags">The metric tags.</param>
+        public static bool IsDeltaCounter(MetricTags tags)
         {
-            return name.StartsWith(Constants.DeltaPrefix, StringComparison.Ordinal);
-        }
+            return WavefrontConstants.IsWavefrontMetricType(tags, WavefrontMetricTypeTagValue);
 
-        /// <summary>
-        ///     Adds the delta counter prefix to a metric name, allowing the metric to be
-        ///     identified as a delta counter.
-        /// </summary>
-        /// <returns>The prefixed name.</returns>
-        /// <param name="name">The metric name.</param>
-        public static string AddPrefix(string name)
-        {
-            return Constants.DeltaPrefix + name;
-        }
-
-        /// <summary>
-        ///     Removes the delta counter prefix from a metric name.
-        /// </summary>
-        /// <returns>The original name of the metric.</returns>
-        /// <param name="name">The delta counter's name.</param>
-        public static string RemovePrefix(string name)
-        {
-            return name.Substring(Constants.DeltaPrefix.Length);
         }
     }
 }

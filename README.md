@@ -5,7 +5,7 @@ This package provides support for reporting metrics recorded by App Metrics to W
 ## Dependencies
   * .NET Standard (>= 2.0)
   * App.Metrics (>= 2.1.0)
-  * Wavefront.CSharp.SDK (>= 0.2.0) (https://github.com/wavefrontHQ/wavefront-csharp-sdk)
+  * Wavefront.CSharp.SDK (>= 0.3.0-alpha) (https://github.com/wavefrontHQ/wavefront-csharp-sdk)
 
 ## Usage
 
@@ -35,6 +35,7 @@ for instructions on how to instantiate WavefrontProxyClient or WavefrontDirectIn
       options => {
         options.WavefrontSender = wavefrontDirectIngestionClient;
         options.Source = "appServer1";
+        options.ReportMinuteDistribution = true;
       })
     .Build();
 ```
@@ -43,6 +44,9 @@ for instructions on how to instantiate WavefrontProxyClient or WavefrontDirectIn
 The Wavefront reporter has the following configuration options:
   * WavefrontSender - the client that handles sending of metrics to Wavefront via proxy or direct ingestion.
   * Source - the source for your metrics.
+  * ReportMinuteDistribution - report Wavefront Histograms aggregated into minute intervals.
+  * ReportHourDistribution - report Wavefront Histograms aggregated into hour intervals.
+  * ReportDayDistribution - report Wavefront Histograms aggregated into day intervals.
   * Filter - the filter used to filter metrics just for this reporter.
   * FlushInterval - the delay between reporting metrics.
 
@@ -85,5 +89,21 @@ Or you can use the `AppMetricsTaskScheduler` to schedule the reporting of metric
 
   ...
   metrics.Measure.Counter.Increment(myDeltaCounter);
+  
+  
+  /* 
+   * Wavefront Histogram
+   * 
+   * Configure and instantiate using WavefrontHistogramOptions.Builder.
+   * Do not update option fields after instantiation.
+   */
+  var myWavefrontHistogram = new WavefrontHistogramOptions
+    .Builder("myWavefrontHistogram")
+    .MeasurementUnit(Unit.KiloBytes)
+    .Tags(new MetricTags("cluster", "us-west"))
+    .Build();
+
+  ...
+  metrics.Measure.Histogram.Update(myWavefrontHistogram, myValue);
 
 ```

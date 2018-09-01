@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using App.Metrics;
 using App.Metrics.Counter;
+using App.Metrics.Histogram;
 using App.Metrics.Serialization;
 using Wavefront.CSharp.SDK.Common;
 using Wavefront.CSharp.SDK.DirectIngestion;
+using Wavefront.CSharp.SDK.Entities.Histograms;
 using Wavefront.CSharp.SDK.Entities.Metrics;
 using static App.Metrics.AppMetricsConstants;
 
@@ -18,14 +20,22 @@ namespace App.Metrics.Formatters.Wavefront
     public class MetricSnapshotWavefrontWriter : IMetricSnapshotWriter
     {
         private static readonly Regex SimpleNames = new Regex("[^a-zA-Z0-9_.\\-~]");
+        private static readonly HashSet<string> TagsToExclude =
+            new HashSet<string> { WavefrontConstants.WavefrontMetricTypeTagKey };
 
         private readonly IWavefrontSender wavefrontSender;
         private readonly string source;
+        private readonly ISet<HistogramGranularity> histogramGranularities;
 
-        public MetricSnapshotWavefrontWriter(IWavefrontSender wavefrontSender, string source)
+        public MetricSnapshotWavefrontWriter(
+            IWavefrontSender wavefrontSender,
+            string source,
+            ISet<HistogramGranularity> histogramGranularities)
         {
             this.wavefrontSender = wavefrontSender;
             this.source = source;
+            this.histogramGranularities = histogramGranularities;
+
             MetricNameMapping = new GeneratedMetricNameMapping();
         }
 
@@ -53,7 +63,6 @@ namespace App.Metrics.Formatters.Wavefront
             var fields = columns.Zip(values, (column, data) => new { column, data })
                                 .ToDictionary(pair => pair.column, pair => pair.data);
 
-            // Unable to use a switch statement because the condition values are readonly
             if (metricTypeValue == Pack.ApdexMetricTypeValue)
             {
                 WriteApdex(context, name, fields, tags, timestamp);
@@ -96,23 +105,20 @@ namespace App.Metrics.Formatters.Wavefront
         private void WriteCounter(string context, string name, IDictionary<string, object> fields,
                                   MetricTags tags, DateTime timestamp)
         {
-            bool isDeltaCounter = DeltaCounterOptions.IsDeltaCounter(name);
-            if (isDeltaCounter)
-            {
-                name = DeltaCounterOptions.RemovePrefix(name);
-            }
+            bool isDeltaCounter = DeltaCounterOptions.IsDeltaCounter(tags);
 
             foreach (var entry in MetricNameMapping.Counter)
             {
                 if (fields.ContainsKey(entry.Value))
                 {
+                    // Report delta counters using an API that is specific to delta counters.
                     if (isDeltaCounter)
                     {
                         wavefrontSender.SendDeltaCounter(
                             ConcatAndSanitize(context, name, entry.Value),
                             Convert.ToDouble(fields[entry.Value]),
                             source,
-                            tags.ToDictionary()
+                            FilterTags(tags)
                         );
 
                     }
@@ -139,11 +145,58 @@ namespace App.Metrics.Formatters.Wavefront
         private void WriteHistogram(string context, string name, IDictionary<string, object> fields,
                                     MetricTags tags, DateTime timestamp)
         {
-            foreach (var entry in MetricNameMapping.Histogram)
+            bool isWavefrontHistogram = WavefrontHistogramOptions.IsWavefrontHistogram(tags);
+
+            // Report Wavefront Histograms using an API that is specific to Wavefront Histograms.
+            if (isWavefrontHistogram)
             {
-                if (fields.ContainsKey(entry.Value))
+                name = ConcatAndSanitize(context, name);
+
+                // Wavefront Histograms are reported as a distribution, so we must extract the
+                // distribution from a HistogramValue that is carrying it in a serialized format.
+                string keyFieldName =
+                    MetricNameMapping.Histogram[HistogramValueDataKeys.UserMaxValue];
+                string valueFieldName =
+                    MetricNameMapping.Histogram[HistogramValueDataKeys.UserMinValue];
+
+                if (fields.ContainsKey(keyFieldName) && fields.ContainsKey(valueFieldName))
                 {
-                    Write(context, name, entry.Value, fields[entry.Value], tags, timestamp);
+                    string key = (string)fields[keyFieldName];
+                    string value = (string)fields[valueFieldName];
+
+                    // Deserialize the distributions into the right format for reporting.
+                    var distributions = WavefrontHistogramImpl.Deserialize(
+                        new KeyValuePair<string, string>(key, value));
+
+                    foreach (var distribution in distributions)
+                    {
+                        wavefrontSender.SendDistribution(
+                            name,
+                            distribution.Centroids,
+                            histogramGranularities,
+                            UnixTime(timestamp),
+                            source,
+                            FilterTags(tags)
+                        );
+                    }
+                }
+            }
+            else
+            {
+                foreach (var entry in MetricNameMapping.Histogram)
+                {
+                    // Do not report non-numerical metrics
+                    if (entry.Key == HistogramValueDataKeys.UserLastValue ||
+                        entry.Key == HistogramValueDataKeys.UserMaxValue ||
+                        entry.Key == HistogramValueDataKeys.UserMinValue)
+                    {
+                        continue;
+                    }
+
+                    if (fields.ContainsKey(entry.Value))
+                    {
+                        Write(context, name, entry.Value, fields[entry.Value], tags, timestamp);
+                    }
                 }
             }
         }
@@ -167,7 +220,7 @@ namespace App.Metrics.Formatters.Wavefront
                                        Convert.ToDouble(value),
                                        UnixTime(timestamp),
                                        source,
-                                       tags.ToDictionary()
+                                       FilterTags(tags)
                                       );
         }
 
@@ -183,8 +236,13 @@ namespace App.Metrics.Formatters.Wavefront
 
         private long UnixTime(DateTime timestamp)
         {
-            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            return Convert.ToInt64((timestamp - epoch).TotalSeconds);
+            return new DateTimeOffset(timestamp).ToUnixTimeSeconds();
+        }
+
+        private Dictionary<string, string> FilterTags(MetricTags tags)
+        {
+            return tags.ToDictionary().Where(tag => !TagsToExclude.Contains(tag.Key))
+                       .ToDictionary(tag => tag.Key, tag => tag.Value);
         }
 
         public void Dispose()

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>0.1.95</PackageVersion>
+    <PackageVersion>0.3.0-alpha</PackageVersion>
     <Authors>Han Zhang</Authors>
     <Description>This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.</Description>
     <PackageId>Wavefront.AppMetrics.CSharp.SDK</PackageId>
@@ -16,18 +16,16 @@
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="App.Metrics" Version="2.1.0" />
-    <PackageReference Include="Wavefront.CSharp.SDK" Version="0.2.0" />
+    <PackageReference Include="Wavefront.CSharp.SDK" Version="0.3.0-alpha" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App.Metrics.Counter\" />
     <Folder Include="App.Metrics.Counter\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="App.Metrics.Internal\DefaultMetricContextRegistryExtension.cs" />
-    <Compile Remove="App.Metrics.Internal\WavefrontMetricsProvider.cs" />
-    <Compile Remove="App.Metrics\MeasureMetricsExtension.cs" />
-    <Compile Remove="App.Metrics.Counter\DeltaCounterBuilder.cs" />
+    <Folder Include="App.Metrics.ReservoirSampling\" />
+    <Folder Include="App.Metrics.ReservoirSampling\Wavefront\" />
+    <Folder Include="App.Metrics.Histogram\" />
+    <Folder Include="App.Metrics\" />
   </ItemGroup>
 </Project>
