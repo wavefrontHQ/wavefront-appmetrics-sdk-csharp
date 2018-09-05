@@ -107,16 +107,18 @@ namespace App.Metrics.Formatters.Wavefront
         {
             bool isDeltaCounter = DeltaCounterOptions.IsDeltaCounter(tags);
 
-            foreach (var entry in MetricNameMapping.Counter)
+            var metricNames = MetricNameMapping.Counter.Values.Union(new string[] {"value"});
+
+            foreach (string metricName in metricNames)
             {
-                if (fields.ContainsKey(entry.Value))
+                if (fields.ContainsKey(metricName))
                 {
                     // Report delta counters using an API that is specific to delta counters.
                     if (isDeltaCounter)
                     {
                         wavefrontSender.SendDeltaCounter(
-                            ConcatAndSanitize(context, name, entry.Value),
-                            Convert.ToDouble(fields[entry.Value]),
+                            ConcatAndSanitize(context, name, metricName),
+                            Convert.ToDouble(fields[metricName]),
                             source,
                             FilterTags(tags)
                         );
@@ -124,7 +126,7 @@ namespace App.Metrics.Formatters.Wavefront
                     }
                     else
                     {
-                        Write(context, name, entry.Value, fields[entry.Value], tags, timestamp);
+                        Write(context, name, metricName, fields[metricName], tags, timestamp);
                     }
                 }
             }
@@ -133,13 +135,7 @@ namespace App.Metrics.Formatters.Wavefront
         private void WriteGauge(string context, string name, IDictionary<string, object> fields,
                                 MetricTags tags, DateTime timestamp)
         {
-            foreach (var entry in MetricNameMapping.Gauge)
-            {
-                if (fields.ContainsKey(entry.Value))
-                {
-                    Write(context, name, entry.Value, fields[entry.Value], tags, timestamp);
-                }
-            }
+            Write(context, name, "value", fields["value"], tags, timestamp);
         }
 
         private void WriteHistogram(string context, string name, IDictionary<string, object> fields,
@@ -174,7 +170,7 @@ namespace App.Metrics.Formatters.Wavefront
                             name,
                             distribution.Centroids,
                             histogramGranularities,
-                            UnixTime(timestamp),
+                            distribution.Timestamp,
                             source,
                             FilterTags(tags)
                         );

@@ -12,6 +12,7 @@ namespace App.Metrics.Reporting.Wavefront
         public MetricsReportingWavefrontOptions()
         {
             Source = "app-metrics";
+            WavefrontHistogram = new MetricsReportingWavefrontHistogramOptions();
         }
 
         /// <summary>
@@ -28,25 +29,10 @@ namespace App.Metrics.Reporting.Wavefront
         public string Source { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether to report Wavefront Histograms
-        ///     aggregated into minute intervals.
+        ///     Gets the options that pertain to the reporting of Wavefront Histograms.
         /// </summary>
-        /// <value><c>true</c> to report in minute intervals, <c>false</c> otherwise.</value>
-        public bool ReportMinuteDistribution { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether to report Wavefront Histograms
-        ///     aggregated into hour intervals.
-        /// </summary>
-        /// <value><c>true</c> to report in hour intervals, <c>false</c> otherwise.</value>
-        public bool ReportHourDistribution { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether to report Wavefront Histograms
-        ///     aggregated into day intervals.
-        /// </summary>
-        /// <value><c>true</c> to report in day intervals, <c>false</c> otherwise.</value>
-        public bool ReportDayDistribution { get; set; }
+        /// <value>The options for the reporting of Wavefront Histograms.</value>
+        public MetricsReportingWavefrontHistogramOptions WavefrontHistogram { get; }
 
         /// <summary>
         ///     Gets or sets the <see cref="IFilterMetrics" /> to use for just this reporter.

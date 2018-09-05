@@ -41,15 +41,15 @@ namespace App.Metrics.Reporting.Wavefront
             source = options.Source;
 
             histogramGranularities = new HashSet<HistogramGranularity>();
-            if (options.ReportMinuteDistribution)
+            if (options.WavefrontHistogram.ReportMinuteDistribution)
             {
                 histogramGranularities.Add(HistogramGranularity.Minute);
             }
-            if (options.ReportHourDistribution)
+            if (options.WavefrontHistogram.ReportHourDistribution)
             {
                 histogramGranularities.Add(HistogramGranularity.Hour);
             }
-            if (options.ReportDayDistribution)
+            if (options.WavefrontHistogram.ReportDayDistribution)
             {
                 histogramGranularities.Add(HistogramGranularity.Day);
             }

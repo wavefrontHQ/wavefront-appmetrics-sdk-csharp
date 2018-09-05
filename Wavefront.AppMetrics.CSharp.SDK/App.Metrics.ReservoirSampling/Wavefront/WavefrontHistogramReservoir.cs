@@ -44,7 +44,7 @@ namespace App.Metrics.ReservoirSampling.Wavefront
         }
 
         /// <summary>
-        ///     This method is not supported by Wavefront Histogarms.
+        ///     This method is not supported by Wavefront Histograms.
         /// </summary>
         public void Reset()
         {
@@ -52,7 +52,7 @@ namespace App.Metrics.ReservoirSampling.Wavefront
         }
 
         /// <summary>
-        ///     This method is not supported by Wavefront Histogarms.
+        ///     This method is not supported by Wavefront Histograms.
         /// </summary>
         public void Update(long value, string userValue)
         {
