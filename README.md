@@ -1,4 +1,4 @@
-# Wavefront App Metrics Reporter [![travis build status](https://travis-ci.com/wavefrontHQ/wavefront-appmetrics-csharp-sdk.svg?branch=master)](https://travis-ci.com/wavefrontHQ/wavefront-appmetrics-csharp-sdk)
+# Wavefront App Metrics Reporter
 
 This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.
 
