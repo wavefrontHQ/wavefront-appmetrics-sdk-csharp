@@ -121,14 +121,16 @@ namespace App.Metrics.Reporting.Wavefront
             MetricsDataValueSource metricsData,
             CancellationToken cancellationToken = default)
         {
+            var fields = new MetricFields();
             var serializer = new MetricSnapshotSerializer();
 
             using (var writer = new MetricSnapshotWavefrontWriter(
                 wavefrontSender,
                 source,
-                histogramGranularities))
+                histogramGranularities,
+                fields))
             {
-                serializer.Serialize(writer, metricsData);
+                serializer.Serialize(writer, metricsData, fields);
             }
 
 #if NETSTANDARD1_6

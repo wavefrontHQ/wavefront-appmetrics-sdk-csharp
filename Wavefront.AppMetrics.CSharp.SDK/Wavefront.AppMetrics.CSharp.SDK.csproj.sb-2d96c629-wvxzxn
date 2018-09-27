@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>3.0.0-alpha-001</PackageVersion>
-    <Authors>Wavefront</Authors>
+    <PackageVersion>3.0.0-alpha000</PackageVersion>
+    <Authors>Han Zhang</Authors>
     <Description>This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.</Description>
     <PackageId>Wavefront.AppMetrics.CSharp.SDK</PackageId>
   </PropertyGroup>
@@ -27,5 +27,8 @@
     <Folder Include="App.Metrics.ReservoirSampling\Wavefront\" />
     <Folder Include="App.Metrics.Histogram\" />
     <Folder Include="App.Metrics\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="App.Metrics.Formatters.Wavefront\MetricSnapshotWavefrontWriterExtensions.cs" />
   </ItemGroup>
 </Project>

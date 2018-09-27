@@ -4,7 +4,7 @@ This package provides support for reporting metrics recorded by App Metrics to W
 
 ## Dependencies
   * .NET Standard (>= 2.0)
-  * App.Metrics (>= 2.0.0)
+  * App.Metrics (>= 3.0.0-alpha-0780)
   * Wavefront.CSharp.SDK (>= 0.3.0-alpha) (https://github.com/wavefrontHQ/wavefront-csharp-sdk)
 
 ## Usage
