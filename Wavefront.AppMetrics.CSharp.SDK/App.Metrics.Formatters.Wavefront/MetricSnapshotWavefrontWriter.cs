@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using App.Metrics;
 using App.Metrics.Counter;
-using App.Metrics.Histogram;
 using App.Metrics.Serialization;
 using Wavefront.CSharp.SDK.Common;
-using Wavefront.CSharp.SDK.Entities.Histograms;
 using Wavefront.CSharp.SDK.Entities.Metrics;
 using static App.Metrics.AppMetricsConstants;
 
@@ -24,18 +22,15 @@ namespace App.Metrics.Formatters.Wavefront
 
         private readonly IWavefrontSender wavefrontSender;
         private readonly string source;
-        private readonly ISet<HistogramGranularity> histogramGranularities;
         private readonly MetricFields fields;
 
         public MetricSnapshotWavefrontWriter(
             IWavefrontSender wavefrontSender,
             string source,
-            ISet<HistogramGranularity> histogramGranularities,
             MetricFields fields)
         {
             this.wavefrontSender = wavefrontSender;
             this.source = source;
-            this.histogramGranularities = histogramGranularities;
             this.fields = fields;
         }
 
@@ -137,59 +132,20 @@ namespace App.Metrics.Formatters.Wavefront
         private void WriteHistogram(string context, string name, IDictionary<string, object> data,
                                     MetricTags tags, DateTime timestamp)
         {
-            bool isWavefrontHistogram = WavefrontHistogramOptions.IsWavefrontHistogram(tags);
-
-            // Report Wavefront Histograms using an API that is specific to Wavefront Histograms.
-            if (isWavefrontHistogram)
+            foreach (var field in fields.Histogram)
             {
-                name = ConcatAndSanitize(context, name);
-
-                // Wavefront Histograms are reported as a distribution, so we must extract the
-                // distribution from a HistogramValue that is carrying it in a serialized format.
-                string keyFieldName =
-                    fields.Histogram[HistogramFields.UserMaxValue];
-                string valueFieldName =
-                    fields.Histogram[HistogramFields.UserMinValue];
-
-                if (data.ContainsKey(keyFieldName) && data.ContainsKey(valueFieldName))
+                // Do not report non-numerical metrics
+                if (field.Key == HistogramFields.UserLastValue ||
+                    field.Key == HistogramFields.UserMaxValue ||
+                    field.Key == HistogramFields.UserMinValue)
                 {
-                    string key = (string)data[keyFieldName];
-                    string value = (string)data[valueFieldName];
-
-                    // Deserialize the distributions into the right format for reporting.
-                    var distributions = WavefrontHistogramImpl.Deserialize(
-                        new KeyValuePair<string, string>(key, value));
-
-                    foreach (var distribution in distributions)
-                    {
-                        wavefrontSender.SendDistribution(
-                            name,
-                            distribution.Centroids,
-                            histogramGranularities,
-                            distribution.Timestamp,
-                            source,
-                            FilterTags(tags)
-                        );
-                    }
+                    continue;
                 }
-            }
-            else
-            {
-                foreach (var field in fields.Histogram)
-                {
-                    // Do not report non-numerical metrics
-                    if (field.Key == HistogramFields.UserLastValue ||
-                        field.Key == HistogramFields.UserMaxValue ||
-                        field.Key == HistogramFields.UserMinValue)
-                    {
-                        continue;
-                    }
 
-                    if (data.ContainsKey(field.Value))
-                    {
-                        WriteInternal(context, name, field.Value, data[field.Value], tags,
-                                      timestamp);
-                    }
+                if (data.ContainsKey(field.Value))
+                {
+                    WriteInternal(context, name, field.Value, data[field.Value], tags,
+                                  timestamp);
                 }
             }
         }
