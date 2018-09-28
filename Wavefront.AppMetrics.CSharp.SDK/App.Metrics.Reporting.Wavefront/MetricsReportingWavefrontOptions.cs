@@ -12,7 +12,6 @@ namespace App.Metrics.Reporting.Wavefront
         public MetricsReportingWavefrontOptions()
         {
             Source = "app-metrics";
-            WavefrontHistogram = new MetricsReportingWavefrontHistogramOptions();
         }
 
         /// <summary>
@@ -27,12 +26,6 @@ namespace App.Metrics.Reporting.Wavefront
         /// </summary>
         /// <value>The source.</value>
         public string Source { get; set; }
-
-        /// <summary>
-        ///     Gets the options that pertain to the reporting of Wavefront Histograms.
-        /// </summary>
-        /// <value>The options for the reporting of Wavefront Histograms.</value>
-        public MetricsReportingWavefrontHistogramOptions WavefrontHistogram { get; }
 
         /// <summary>
         ///     Gets or sets the <see cref="IFilterMetrics" /> to use for just this reporter.
