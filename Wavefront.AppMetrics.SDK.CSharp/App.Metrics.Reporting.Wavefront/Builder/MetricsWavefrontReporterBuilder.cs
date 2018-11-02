@@ -1,6 +1,6 @@
 ﻿using System;
 using App.Metrics.Builder;
-using Wavefront.CSharp.SDK.Common;
+using Wavefront.SDK.CSharp.Common;
 
 namespace App.Metrics.Reporting.Wavefront.Builder
 {

@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wavefront.AppMetrics.CSharp.SDK", "Wavefront.AppMetrics.CSharp.SDK\Wavefront.AppMetrics.CSharp.SDK.csproj", "{BBD36032-EEEC-439B-9273-62C053F9DFA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wavefront.AppMetrics.SDK.CSharp", "Wavefront.AppMetrics.SDK.CSharp\Wavefront.AppMetrics.SDK.CSharp.csproj", "{BBD36032-EEEC-439B-9273-62C053F9DFA0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E68828EB-A93E-4769-9EE3-7B36C1269BA4}"
 	ProjectSection(SolutionItems) = preProject

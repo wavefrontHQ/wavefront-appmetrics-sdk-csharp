@@ -5,16 +5,15 @@ This package provides support for reporting metrics recorded by App Metrics to W
 ## Dependencies
   * .NET Standard (>= 2.0)
   * App.Metrics (>= 2.0.0)
-  * Wavefront.CSharp.SDK (>= 0.3.0-alpha) (https://github.com/wavefrontHQ/wavefront-csharp-sdk)
+  * Wavefront.SDK.CSharp (>= 0.1.0) [Github repo](https://github.com/wavefrontHQ/wavefront-sdk-csharp/tree/han/refactoring-and-aspnetcore-updates)
 
 ## Usage
 
 ### Instantiate a WavefrontSender (either WavefrontProxyClient or WavefrontDirectIngestionClient)
-Refer to this page (https://github.com/wavefrontHQ/wavefront-csharp-sdk/blob/master/README.md)
-for instructions on how to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
+See the [Wavefront sender documentation](https://github.com/wavefrontHQ/wavefront-sdk-csharp/blob/han/refactoring-and-aspnetcore-updates/README.md#usage) for details on how to instantiate WavefrontProxyClient or WavefrontDirectIngestionClient.
 
 ### Option 1: Enable the Wavefront reporter using Report.ToWavefront(wavefrontSender)
-```
+```csharp
   /*
    * Using the wavefrontSender instantiated by following the above instructions,
    * enable reporting of metrics to Wavefront.
@@ -25,7 +24,7 @@ for instructions on how to instantiate WavefrontProxyClient or WavefrontDirectIn
 ```
 
 ### Option 2: Configure and enable the Wavefront reporter using Report.ToWavefront(options)
-```
+```csharp
   /*
    * Using the wavefrontSender instantiated by following the above instructions,
    * enable reporting of metrics to Wavefront and set the source for your metrics. 
@@ -57,13 +56,13 @@ for instructions on how to schedule reporting.
 
 Otherwise, you can run all configured reports using the `ReportRunner` on `IMetricsRoot`:
 
-``` 
+```csharp
   await metrics.ReportRunner.RunAllAsync();
 ```
 
 Or you can use the `AppMetricsTaskScheduler` to schedule the reporting of metrics:
 
-```
+```csharp
   var scheduler = new AppMetricsTaskScheduler(
     TimeSpan.FromSeconds(10),
     async () =>
@@ -74,7 +73,7 @@ Or you can use the `AppMetricsTaskScheduler` to schedule the reporting of metric
 ```
 
 ### Wavefront-specific entities that you can report
-```
+```csharp
   /* 
    * Wavefront Delta Counter
    * 

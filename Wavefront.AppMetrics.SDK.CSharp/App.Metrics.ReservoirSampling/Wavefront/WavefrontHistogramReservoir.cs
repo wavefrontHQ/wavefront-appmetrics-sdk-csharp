@@ -1,5 +1,5 @@
 ﻿using System;
-using Wavefront.CSharp.SDK.Entities.Histograms;
+using Wavefront.SDK.CSharp.Entities.Histograms;
 
 namespace App.Metrics.ReservoirSampling.Wavefront
 {

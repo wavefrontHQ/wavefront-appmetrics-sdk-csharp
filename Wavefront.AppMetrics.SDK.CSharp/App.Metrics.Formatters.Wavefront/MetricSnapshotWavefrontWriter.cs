@@ -6,10 +6,9 @@ using App.Metrics;
 using App.Metrics.Counter;
 using App.Metrics.Histogram;
 using App.Metrics.Serialization;
-using Wavefront.CSharp.SDK.Common;
-using Wavefront.CSharp.SDK.DirectIngestion;
-using Wavefront.CSharp.SDK.Entities.Histograms;
-using Wavefront.CSharp.SDK.Entities.Metrics;
+using Wavefront.SDK.CSharp.Common;
+using Wavefront.SDK.CSharp.Entities.Histograms;
+using Wavefront.SDK.CSharp.Entities.Metrics;
 using static App.Metrics.AppMetricsConstants;
 
 namespace App.Metrics.Formatters.Wavefront
@@ -113,11 +112,12 @@ namespace App.Metrics.Formatters.Wavefront
             {
                 if (fields.ContainsKey(metricName))
                 {
+                    var suffix = metricName.Equals("value") ? "count" : metricName;
                     // Report delta counters using an API that is specific to delta counters.
                     if (isDeltaCounter)
                     {
                         wavefrontSender.SendDeltaCounter(
-                            ConcatAndSanitize(context, name, metricName),
+                            ConcatAndSanitize(context, name, suffix),
                             Convert.ToDouble(fields[metricName]),
                             source,
                             FilterTags(tags)
@@ -126,7 +126,7 @@ namespace App.Metrics.Formatters.Wavefront
                     }
                     else
                     {
-                        Write(context, name, metricName, fields[metricName], tags, timestamp);
+                        Write(context, name, suffix, fields[metricName], tags, timestamp);
                     }
                 }
             }
@@ -209,10 +209,10 @@ namespace App.Metrics.Formatters.Wavefront
             }
         }
 
-        private void Write(string context, string name, string subname, object value,
+        private void Write(string context, string name, string suffix, object value,
                            MetricTags tags, DateTime timestamp)
         {
-            wavefrontSender.SendMetric(ConcatAndSanitize(context, name, subname),
+            wavefrontSender.SendMetric(ConcatAndSanitize(context, name, suffix),
                                        Convert.ToDouble(value),
                                        UnixTime(timestamp),
                                        source,

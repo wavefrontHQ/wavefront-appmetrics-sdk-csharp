@@ -1,7 +1,4 @@
-﻿using System;
-using Wavefront.CSharp.SDK.Common;
-
-namespace App.Metrics.Counter
+﻿namespace App.Metrics.Counter
 {
     /// <summary>
     ///     Custom Wavefront configuration of a <see cref="ICounter" /> that will be reported

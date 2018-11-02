@@ -7,9 +7,9 @@ using App.Metrics.Internal;
 using App.Metrics.Logging;
 using App.Metrics.Serialization;
 using App.Metrics.Formatters.Wavefront;
-using Wavefront.CSharp.SDK.Common;
+using Wavefront.SDK.CSharp.Common;
 using System.Collections.Generic;
-using Wavefront.CSharp.SDK.Entities.Histograms;
+using Wavefront.SDK.CSharp.Entities.Histograms;
 
 namespace App.Metrics.Reporting.Wavefront
 {
