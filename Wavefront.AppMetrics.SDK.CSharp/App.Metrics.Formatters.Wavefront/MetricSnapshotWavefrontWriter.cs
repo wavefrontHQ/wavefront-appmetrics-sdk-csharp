@@ -24,15 +24,18 @@ namespace App.Metrics.Formatters.Wavefront
 
         private readonly IWavefrontSender wavefrontSender;
         private readonly string source;
+        private readonly IDictionary<string, string> globalTags;
         private readonly ISet<HistogramGranularity> histogramGranularities;
 
         public MetricSnapshotWavefrontWriter(
             IWavefrontSender wavefrontSender,
             string source,
+            IDictionary<string, string> globalTags,
             ISet<HistogramGranularity> histogramGranularities)
         {
             this.wavefrontSender = wavefrontSender;
             this.source = source;
+            this.globalTags = globalTags;
             this.histogramGranularities = histogramGranularities;
 
             MetricNameMapping = new GeneratedMetricNameMapping();
@@ -237,8 +240,13 @@ namespace App.Metrics.Formatters.Wavefront
 
         private Dictionary<string, string> FilterTags(MetricTags tags)
         {
-            return tags.ToDictionary().Where(tag => !TagsToExclude.Contains(tag.Key))
-                       .ToDictionary(tag => tag.Key, tag => tag.Value);
+            var tagsDict = tags.ToDictionary().Where(tag => !TagsToExclude.Contains(tag.Key))
+                               .ToDictionary(tag => tag.Key, tag => tag.Value);
+            foreach (var globalTag in globalTags)
+            {
+                tagsDict.Add(globalTag.Key, globalTag.Value);
+            }
+            return tagsDict;
         }
 
         public void Dispose()

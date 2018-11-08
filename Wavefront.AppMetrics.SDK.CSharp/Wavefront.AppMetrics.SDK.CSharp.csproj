@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackOnBuild>true</PackOnBuild>
     <PackageVersion>2.0.0</PackageVersion>
-    <Authors>Han Zhang</Authors>
+    <Authors>Wavefront</Authors>
     <Description>This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.</Description>
     <PackageId>Wavefront.AppMetrics.SDK.CSharp</PackageId>
   </PropertyGroup>

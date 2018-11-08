@@ -10,6 +10,7 @@ using App.Metrics.Formatters.Wavefront;
 using Wavefront.SDK.CSharp.Common;
 using System.Collections.Generic;
 using Wavefront.SDK.CSharp.Entities.Histograms;
+using static Wavefront.SDK.CSharp.Common.Constants;
 
 namespace App.Metrics.Reporting.Wavefront
 {
@@ -22,6 +23,7 @@ namespace App.Metrics.Reporting.Wavefront
 
         private readonly IWavefrontSender wavefrontSender;
         private readonly string source;
+        private readonly IDictionary<string, string> globalTags;
         private readonly ISet<HistogramGranularity> histogramGranularities;
 
         public WavefrontReporter(MetricsReportingWavefrontOptions options)
@@ -39,6 +41,22 @@ namespace App.Metrics.Reporting.Wavefront
             wavefrontSender = options.WavefrontSender;
 
             source = options.Source;
+
+            globalTags = new Dictionary<string, string>();
+            if (options.ApplicationTags != null)
+            {
+                globalTags.Add(ApplicationTagKey, options.ApplicationTags.Application);
+                globalTags.Add(ServiceTagKey, options.ApplicationTags.Service);
+                globalTags.Add(ClusterTagKey, options.ApplicationTags.Cluster ?? NullTagValue);
+                globalTags.Add(ShardTagKey, options.ApplicationTags.Shard ?? NullTagValue);
+                if (options.ApplicationTags.CustomTags != null)
+                {
+                    foreach (var customTag in options.ApplicationTags.CustomTags)
+                    {
+                        globalTags.Add(customTag.Key, customTag.Value);
+                    }
+                }
+            }
 
             histogramGranularities = new HashSet<HistogramGranularity>();
             if (options.WavefrontHistogram.ReportMinuteDistribution)
@@ -126,6 +144,7 @@ namespace App.Metrics.Reporting.Wavefront
             using (var writer = new MetricSnapshotWavefrontWriter(
                 wavefrontSender,
                 source,
+                globalTags,
                 histogramGranularities))
             {
                 serializer.Serialize(writer, metricsData);
