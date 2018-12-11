@@ -1,6 +1,7 @@
 ﻿using System;
 using App.Metrics.Filters;
-using Wavefront.CSharp.SDK.Common;
+using Wavefront.SDK.CSharp.Common;
+using Wavefront.SDK.CSharp.Common.Application;
 
 namespace App.Metrics.Reporting.Wavefront
 {
@@ -46,5 +47,12 @@ namespace App.Metrics.Reporting.Wavefront
         ///     Gets or sets the interval between flushing metrics.
         /// </summary>
         public TimeSpan FlushInterval { get; set; }
+
+        /// <summary>
+        ///     Gets or sets metadata about your application that is propagated as tags when
+        ///     metrics/histograms are sent to Wavefront. This is an optional property.
+        /// </summary>
+        /// <value>The application tags.</value>
+        public ApplicationTags ApplicationTags { get; set; }
     }
 }
