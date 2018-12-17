@@ -1,14 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackOnBuild>true</PackOnBuild>
+    <NoWarn>NU1701</NoWarn>
+    <PackageId>Wavefront.AppMetrics.SDK.CSharp</PackageId>
     <PackageVersion>2.0.0</PackageVersion>
+    <Title>Wavefront by VMware App Metrics SDK for C#</Title>
     <Authors>Wavefront</Authors>
     <Description>This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.</Description>
-    <PackageId>Wavefront.AppMetrics.SDK.CSharp</PackageId>
+    <PackageLicenseUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>git://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</RepositoryUrl>
+    <PackageTags>Wavefront;VMware;appmetrics;metrics;reporting</PackageTags>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
@@ -16,17 +21,16 @@
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="App.Metrics" Version="2.0.0" />
-    <PackageReference Include="Wavefront.SDK.CSharp" Version="0.1.0" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
+    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App.Metrics\" />
     <Folder Include="App.Metrics.Counter\" />
-    <Folder Include="App.Metrics.Counter\" />
+    <Folder Include="App.Metrics.Gauge\" />
+    <Folder Include="App.Metrics.Histogram\" />
     <Folder Include="App.Metrics.ReservoirSampling\" />
     <Folder Include="App.Metrics.ReservoirSampling\Wavefront\" />
-    <Folder Include="App.Metrics.Histogram\" />
-    <Folder Include="App.Metrics\" />
-    <Folder Include="App.Metrics.Gauge\" />
   </ItemGroup>
 </Project>
