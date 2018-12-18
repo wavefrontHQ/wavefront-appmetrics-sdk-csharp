@@ -1,0 +1,10 @@
+language: csharp
+solution: Wavefront.AppMetrics.SDK.CSharp.sln
+mono: none
+dotnet: 2.1.300
+
+install:
+ - dotnet restore
+
+script:
+ - dotnet build
