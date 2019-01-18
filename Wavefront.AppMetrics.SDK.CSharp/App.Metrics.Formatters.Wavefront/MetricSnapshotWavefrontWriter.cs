@@ -18,7 +18,6 @@ namespace App.Metrics.Formatters.Wavefront
     /// </summary>
     public class MetricSnapshotWavefrontWriter : IMetricSnapshotWriter
     {
-        private static readonly Regex SimpleNames = new Regex("[^a-zA-Z0-9_.\\-~]");
         private static readonly HashSet<string> TagsToExclude =
             new HashSet<string> { WavefrontConstants.WavefrontMetricTypeTagKey };
 
@@ -120,7 +119,7 @@ namespace App.Metrics.Formatters.Wavefront
                     if (isDeltaCounter)
                     {
                         wavefrontSender.SendDeltaCounter(
-                            ConcatAndSanitize(context, name, suffix),
+                            Concat(context, name, suffix),
                             Convert.ToDouble(fields[metricName]),
                             source,
                             FilterTags(tags)
@@ -149,7 +148,7 @@ namespace App.Metrics.Formatters.Wavefront
             // Report Wavefront Histograms using an API that is specific to Wavefront Histograms.
             if (isWavefrontHistogram)
             {
-                name = ConcatAndSanitize(context, name);
+                name = Concat(context, name);
 
                 // Wavefront Histograms are reported as a distribution, so we must extract the
                 // distribution from a HistogramValue that is carrying it in a serialized format.
@@ -215,7 +214,7 @@ namespace App.Metrics.Formatters.Wavefront
         private void Write(string context, string name, string suffix, object value,
                            MetricTags tags, DateTime timestamp)
         {
-            wavefrontSender.SendMetric(ConcatAndSanitize(context, name, suffix),
+            wavefrontSender.SendMetric(Concat(context, name, suffix),
                                        Convert.ToDouble(value),
                                        UnixTime(timestamp),
                                        source,
@@ -223,14 +222,10 @@ namespace App.Metrics.Formatters.Wavefront
                                       );
         }
 
-        private string ConcatAndSanitize(params string[] components)
+        private string Concat(params string[] components)
         {
-            return Sanitize(String.Join(".", components));
-        }
-
-        private string Sanitize(string name)
-        {
-            return SimpleNames.Replace(name, "_");
+            // sanitization is handled by the Wavefront sender
+            return string.Join(".", components);
         }
 
         private long UnixTime(DateTime timestamp)
