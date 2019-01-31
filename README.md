@@ -5,7 +5,7 @@ This package provides support for reporting metrics recorded by App Metrics to W
 ## Dependencies
   * .NET Standard (>= 2.0)
   * App.Metrics (>= 2.0.0)
-  * Wavefront.SDK.CSharp (>= 1.0) ([NuGet](https://www.nuget.org/packages/Wavefront.SDK.CSharp/))
+  * Wavefront.SDK.CSharp (>= 1.1.0) ([NuGet](https://www.nuget.org/packages/Wavefront.SDK.CSharp/))
 
 ## Set Up App Metrics with Wavefront
 This SDK adds Wavefront integrations to App Metrics, allowing for the reporting of metrics and histograms to Wavefront.
