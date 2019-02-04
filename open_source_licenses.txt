@@ -1,6 +1,6 @@
 open_source_licenses.txt
 
-Wavefront by VMware App Metrics SDK for C# 2.0.1 GA
+Wavefront by VMware App Metrics SDK for C# 2.1.0 GA
 
 ======================================================================
 
