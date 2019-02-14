@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using App.Metrics;
+﻿using App.Metrics;
 using App.Metrics.Counter;
 using App.Metrics.Histogram;
 using App.Metrics.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Wavefront.SDK.CSharp.Common;
 using Wavefront.SDK.CSharp.Entities.Histograms;
 using Wavefront.SDK.CSharp.Entities.Metrics;
@@ -216,7 +215,7 @@ namespace App.Metrics.Formatters.Wavefront
         {
             wavefrontSender.SendMetric(Concat(context, name, suffix),
                                        Convert.ToDouble(value),
-                                       UnixTime(timestamp),
+                                       DateTimeUtils.UnixTimeMilliseconds(timestamp),
                                        source,
                                        FilterTags(tags)
                                       );
@@ -228,18 +227,16 @@ namespace App.Metrics.Formatters.Wavefront
             return string.Join(".", components);
         }
 
-        private long UnixTime(DateTime timestamp)
-        {
-            return new DateTimeOffset(timestamp).ToUnixTimeSeconds();
-        }
-
         private Dictionary<string, string> FilterTags(MetricTags tags)
         {
             var tagsDict = tags.ToDictionary().Where(tag => !TagsToExclude.Contains(tag.Key))
                                .ToDictionary(tag => tag.Key, tag => tag.Value);
-            foreach (var globalTag in globalTags)
+            if (globalTags != null)
             {
-                tagsDict.Add(globalTag.Key, globalTag.Value);
+                foreach (var globalTag in globalTags)
+                {
+                    tagsDict.Add(globalTag.Key, globalTag.Value);
+                }
             }
             return tagsDict;
         }

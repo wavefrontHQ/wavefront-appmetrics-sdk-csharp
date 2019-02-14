@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <PackOnBuild>true</PackOnBuild>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net452</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NoWarn>NU1701</NoWarn>
     <PackageId>Wavefront.AppMetrics.SDK.CSharp</PackageId>
-    <PackageVersion>2.1.0</PackageVersion>
+    <Version>2.1.1</Version>
     <Title>Wavefront by VMware App Metrics SDK for C#</Title>
     <Authors>Wavefront</Authors>
     <Description>This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.</Description>
@@ -23,8 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="App.Metrics" Version="2.0.0" />
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
-    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.1.0" />
+    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App.Metrics\" />

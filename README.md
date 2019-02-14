@@ -2,10 +2,24 @@
 
 This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.
 
-## Dependencies
+## Frameworks Supported
+  * .NET Framework (>= 4.5.2)
   * .NET Standard (>= 2.0)
-  * App.Metrics (>= 2.0.0)
-  * Wavefront.SDK.CSharp (>= 1.1.0) ([NuGet](https://www.nuget.org/packages/Wavefront.SDK.CSharp/))
+
+## Installation
+Install the [NuGet package](https://www.nuget.org/packages/Wavefront.AppMetrics.SDK.CSharp/).
+
+### Package Manager Console
+
+```
+PM> Install-Package Wavefront.AppMetrics.SDK.CSharp
+```
+
+### .NET CLI Console
+
+```
+> dotnet add package Wavefront.AppMetrics.SDK.CSharp
+```
 
 ## Set Up App Metrics with Wavefront
 This SDK adds Wavefront integrations to App Metrics, allowing for the reporting of metrics and histograms to Wavefront.
@@ -54,7 +68,7 @@ The Wavefront reporter has the following configuration options:
 |Property|Description|Required?|
 |-------------|-------------|:-----:|
 |WavefrontSender|The IWavefrontSender instance that handles sending of data to Wavefront.|Y|
-|Source|The source of your metrics. Defaults to "app-metrics".|N|
+|Source|The source of your metrics. Defaults to your local host name.|N|
 |WavefrontHistogram.ReportMinuteDistribution|Whether to report Wavefront Histograms aggregated into minute intervals. Defaults to false.|N|
 |WavefrontHistogram.ReportHourDistribution|Whether to report Wavefront Histograms aggregated into hour intervals. Defaults to false.|N|
 |WavefrontHistogram.ReportDayDistribution|Whether to report Wavefront Histograms aggregated into day intervals. Defaults to false.|N|

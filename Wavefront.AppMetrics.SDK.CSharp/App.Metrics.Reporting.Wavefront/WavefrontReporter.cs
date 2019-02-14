@@ -1,16 +1,15 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using App.Metrics.Filters;
+﻿using App.Metrics.Filters;
 using App.Metrics.Formatters;
+using App.Metrics.Formatters.Wavefront;
 using App.Metrics.Internal;
 using App.Metrics.Logging;
 using App.Metrics.Serialization;
-using App.Metrics.Formatters.Wavefront;
-using Wavefront.SDK.CSharp.Common;
+using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Wavefront.SDK.CSharp.Common;
 using Wavefront.SDK.CSharp.Entities.Histograms;
-using static Wavefront.SDK.CSharp.Common.Constants;
 
 namespace App.Metrics.Reporting.Wavefront
 {
@@ -42,20 +41,13 @@ namespace App.Metrics.Reporting.Wavefront
 
             source = options.Source;
 
-            globalTags = new Dictionary<string, string>();
             if (options.ApplicationTags != null)
             {
-                globalTags.Add(ApplicationTagKey, options.ApplicationTags.Application);
-                globalTags.Add(ServiceTagKey, options.ApplicationTags.Service);
-                globalTags.Add(ClusterTagKey, options.ApplicationTags.Cluster ?? NullTagValue);
-                globalTags.Add(ShardTagKey, options.ApplicationTags.Shard ?? NullTagValue);
-                if (options.ApplicationTags.CustomTags != null)
-                {
-                    foreach (var customTag in options.ApplicationTags.CustomTags)
-                    {
-                        globalTags.Add(customTag.Key, customTag.Value);
-                    }
-                }
+                globalTags = new Dictionary<string, string>(options.ApplicationTags.ToPointTags());
+            }
+            else
+            {
+                globalTags = new Dictionary<string, string>();
             }
 
             histogramGranularities = new HashSet<HistogramGranularity>();
@@ -150,11 +142,7 @@ namespace App.Metrics.Reporting.Wavefront
                 serializer.Serialize(writer, metricsData);
             }
 
-#if NETSTANDARD1_6
-            return Task.CompletedTask;
-#else
             return AppMetricsTaskHelper.CompletedTask();
-#endif
         }
     }
 }
