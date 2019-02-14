@@ -1,5 +1,5 @@
-﻿using System;
-using App.Metrics.Filters;
+﻿using App.Metrics.Filters;
+using System;
 using Wavefront.SDK.CSharp.Common;
 using Wavefront.SDK.CSharp.Common.Application;
 
@@ -12,7 +12,7 @@ namespace App.Metrics.Reporting.Wavefront
     {
         public MetricsReportingWavefrontOptions()
         {
-            Source = "app-metrics";
+            Source = Utils.GetDefaultSource();
             WavefrontHistogram = new MetricsReportingWavefrontHistogramOptions();
         }
 
