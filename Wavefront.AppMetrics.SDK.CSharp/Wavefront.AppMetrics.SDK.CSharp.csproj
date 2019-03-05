@@ -24,7 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="App.Metrics" Version="2.0.0" />
-    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.1.1" />
+    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App.Metrics\" />
