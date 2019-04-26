@@ -5,11 +5,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NoWarn>NU1701</NoWarn>
     <PackageId>Wavefront.AppMetrics.SDK.CSharp</PackageId>
-    <Version>2.2.0</Version>
+    <Version>2.2.1</Version>
     <Title>Wavefront by VMware App Metrics SDK for C#</Title>
     <Authors>Wavefront</Authors>
     <Description>This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.</Description>
-    <PackageLicenseUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</RepositoryUrl>
@@ -24,7 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="App.Metrics" Version="2.0.0" />
-    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.2.1" />
+    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App.Metrics\" />
@@ -33,5 +33,8 @@
     <Folder Include="App.Metrics.Histogram\" />
     <Folder Include="App.Metrics.ReservoirSampling\" />
     <Folder Include="App.Metrics.ReservoirSampling\Wavefront\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Wavefront.SDK.CSharp.Common;
+using Wavefront.SDK.CSharp.Common.Metrics;
 using Wavefront.SDK.CSharp.Entities.Histograms;
 using Wavefront.SDK.CSharp.Entities.Metrics;
 using static App.Metrics.AppMetricsConstants;
@@ -25,16 +26,37 @@ namespace App.Metrics.Formatters.Wavefront
         private readonly IDictionary<string, string> globalTags;
         private readonly ISet<HistogramGranularity> histogramGranularities;
 
+        private readonly WavefrontSdkCounter gaugesReported;
+        private readonly WavefrontSdkCounter deltaCountersReported;
+        private readonly WavefrontSdkCounter countersReported;
+        private readonly WavefrontSdkCounter wfHistogramsReported;
+        private readonly WavefrontSdkCounter histogramsReported;
+        private readonly WavefrontSdkCounter metersReported;
+        private readonly WavefrontSdkCounter timersReported;
+        private readonly WavefrontSdkCounter apdexesReported;
+        private readonly WavefrontSdkCounter writerErrors;
+
         public MetricSnapshotWavefrontWriter(
             IWavefrontSender wavefrontSender,
             string source,
             IDictionary<string, string> globalTags,
-            ISet<HistogramGranularity> histogramGranularities)
+            ISet<HistogramGranularity> histogramGranularities,
+            WavefrontSdkMetricsRegistry sdkMetricsRegistry)
         {
             this.wavefrontSender = wavefrontSender;
             this.source = source;
             this.globalTags = globalTags;
             this.histogramGranularities = histogramGranularities;
+
+            gaugesReported = sdkMetricsRegistry.Counter("gauges.reported");
+            deltaCountersReported = sdkMetricsRegistry.Counter("delta_counters.reported");
+            countersReported = sdkMetricsRegistry.Counter("counters.reported");
+            wfHistogramsReported = sdkMetricsRegistry.Counter("wavefront_histograms.reported");
+            histogramsReported = sdkMetricsRegistry.Counter("histograms.reported");
+            metersReported = sdkMetricsRegistry.Counter("meters.reported");
+            timersReported = sdkMetricsRegistry.Counter("timers.reported");
+            apdexesReported = sdkMetricsRegistry.Counter("apdexes.reported");
+            writerErrors = sdkMetricsRegistry.Counter("writer.errors");
 
             MetricNameMapping = new GeneratedMetricNameMapping();
         }
@@ -59,34 +81,63 @@ namespace App.Metrics.Formatters.Wavefront
                 return;
             }
 
-            string metricTypeValue = tags.Values[Array.IndexOf(tags.Keys, Pack.MetricTagsTypeKey)];
-            var fields = columns.Zip(values, (column, data) => new { column, data })
-                                .ToDictionary(pair => pair.column, pair => pair.data);
+            try
+            {
+                string metricTypeValue =
+                    tags.Values[Array.IndexOf(tags.Keys, Pack.MetricTagsTypeKey)];
+                var fields = columns.Zip(values, (column, data) => new { column, data })
+                                    .ToDictionary(pair => pair.column, pair => pair.data);
 
-            if (metricTypeValue == Pack.ApdexMetricTypeValue)
-            {
-                WriteApdex(context, name, fields, tags, timestamp);
+                if (metricTypeValue == Pack.ApdexMetricTypeValue)
+                {
+                    WriteApdex(context, name, fields, tags, timestamp);
+                    apdexesReported.Inc();
+                }
+                else if (metricTypeValue == Pack.CounterMetricTypeValue)
+                {
+                    WriteCounter(context, name, fields, tags, timestamp);
+                    if (DeltaCounterOptions.IsDeltaCounter(tags))
+                    {
+                        deltaCountersReported.Inc();
+                    }
+                    else
+                    {
+                        countersReported.Inc();
+                    }
+                }
+                else if (metricTypeValue == Pack.GaugeMetricTypeValue)
+                {
+                    WriteGauge(context, name, fields, tags, timestamp);
+                    gaugesReported.Inc();
+                }
+                else if (metricTypeValue == Pack.HistogramMetricTypeValue)
+                {
+                    WriteHistogram(context, name, fields, tags, timestamp);
+                    if (WavefrontHistogramOptions.IsWavefrontHistogram(tags))
+                    {
+                        wfHistogramsReported.Inc();
+                    }
+                    else
+                    {
+                        histogramsReported.Inc();
+                    }
+                }
+                else if (metricTypeValue == Pack.MeterMetricTypeValue)
+                {
+                    WriteMeter(context, name, fields, tags, timestamp);
+                    metersReported.Inc();
+                }
+                else if (metricTypeValue == Pack.TimerMetricTypeValue)
+                {
+                    WriteMeter(context, name, fields, tags, timestamp);
+                    WriteHistogram(context, name, fields, tags, timestamp);
+                    timersReported.Inc();
+                }
             }
-            else if (metricTypeValue == Pack.CounterMetricTypeValue)
+            catch (Exception e)
             {
-                WriteCounter(context, name, fields, tags, timestamp);
-            }
-            else if (metricTypeValue == Pack.GaugeMetricTypeValue)
-            {
-                WriteGauge(context, name, fields, tags, timestamp);
-            }
-            else if (metricTypeValue == Pack.HistogramMetricTypeValue)
-            {
-                WriteHistogram(context, name, fields, tags, timestamp);
-            }
-            else if (metricTypeValue == Pack.MeterMetricTypeValue)
-            {
-                WriteMeter(context, name, fields, tags, timestamp);
-            }
-            else if (metricTypeValue == Pack.TimerMetricTypeValue)
-            {
-                WriteMeter(context, name, fields, tags, timestamp);
-                WriteHistogram(context, name, fields, tags, timestamp);
+                writerErrors.Inc();
+                throw e;
             }
         }
 
