@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</RepositoryUrl>
     <PackageTags>Wavefront;VMware;appmetrics;metrics;reporting</PackageTags>
-    <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v2.2.0</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v2.2.1</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <LangVersion>7.2</LangVersion>
