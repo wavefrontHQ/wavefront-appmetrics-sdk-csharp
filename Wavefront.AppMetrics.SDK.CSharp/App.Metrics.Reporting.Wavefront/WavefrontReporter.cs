@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Wavefront.SDK.CSharp.Common;
+using Wavefront.SDK.CSharp.Common.Metrics;
 using Wavefront.SDK.CSharp.Entities.Histograms;
 
 namespace App.Metrics.Reporting.Wavefront
@@ -24,6 +25,9 @@ namespace App.Metrics.Reporting.Wavefront
         private readonly string source;
         private readonly IDictionary<string, string> globalTags;
         private readonly ISet<HistogramGranularity> histogramGranularities;
+        private readonly WavefrontSdkMetricsRegistry sdkMetricsRegistry;
+
+        private readonly WavefrontSdkCounter reporterErrors;
 
         public WavefrontReporter(MetricsReportingWavefrontOptions options)
         {
@@ -80,6 +84,14 @@ namespace App.Metrics.Reporting.Wavefront
             // Formatting will be handled by the Wavefront sender.
             Formatter = null;
 
+            sdkMetricsRegistry = new WavefrontSdkMetricsRegistry.Builder(wavefrontSender)
+                .Prefix(Constants.SdkMetricPrefix + ".app_metrics")
+                .Source(source)
+                .Tags(globalTags)
+                .Build();
+
+            reporterErrors = sdkMetricsRegistry.Counter("reporter.errors");
+
             Logger.Info($"Using Wavefront Reporter {this}. FlushInterval: {FlushInterval}");
         }
 
@@ -110,6 +122,7 @@ namespace App.Metrics.Reporting.Wavefront
             }
             catch (Exception e)
             {
+                reporterErrors.Inc();
                 Logger.Error(e.Message);
                 return false;
             }
@@ -133,11 +146,8 @@ namespace App.Metrics.Reporting.Wavefront
         {
             var serializer = new MetricSnapshotSerializer();
 
-            using (var writer = new MetricSnapshotWavefrontWriter(
-                wavefrontSender,
-                source,
-                globalTags,
-                histogramGranularities))
+            using (var writer = new MetricSnapshotWavefrontWriter(wavefrontSender, source,
+                globalTags, histogramGranularities, sdkMetricsRegistry))
             {
                 serializer.Serialize(writer, metricsData);
             }
