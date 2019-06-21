@@ -280,7 +280,8 @@ namespace App.Metrics.Formatters.Wavefront
 
         private Dictionary<string, string> FilterTags(MetricTags tags)
         {
-            var tagsDict = new Dictionary<string, string>(globalTags);
+            var tagsDict = globalTags == null ? new Dictionary<string, string>() :
+                new Dictionary<string, string>(globalTags);
             foreach (var tag in tags.ToDictionary().Where(tag => !TagsToExclude.Contains(tag.Key)))
             {
                 tagsDict[tag.Key] = tag.Value;
