@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NoWarn>NU1701</NoWarn>
     <PackageId>Wavefront.AppMetrics.SDK.CSharp</PackageId>
-    <Version>2.3.0</Version>
+    <Version>2.3.1</Version>
     <Title>Wavefront by VMware App Metrics SDK for C#</Title>
     <Authors>Wavefront</Authors>
     <Description>This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.</Description>
@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</RepositoryUrl>
     <PackageTags>Wavefront;VMware;appmetrics;metrics;reporting</PackageTags>
-    <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v2.3.0</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v2.3.1</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <LangVersion>7.2</LangVersion>
@@ -24,7 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="App.Metrics" Version="2.0.0" />
-    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.4.0" />
+    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.4.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App.Metrics\" />

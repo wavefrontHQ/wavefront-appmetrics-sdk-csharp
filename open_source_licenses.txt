@@ -1,6 +1,6 @@
 open_source_license.txt
 
-Wavefront by VMware App Metrics SDK for C# 2.3.0 GA
+Wavefront by VMware App Metrics SDK for C# 2.3.1 GA
 
 ======================================================================
 
@@ -835,4 +835,4 @@ Source Files is valid for three years from the date you acquired or last used th
 Software product. Alternatively, the Source Files may accompany the
 VMware service.
 
-[WAVEFRONTAPPMETRICSSDKCSHARP221GAAB050619]
+[WAVEFRONTAPPMETRICSSDKCSHARP231GAAB050619]
