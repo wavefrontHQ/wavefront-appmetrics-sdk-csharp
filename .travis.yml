@@ -8,3 +8,4 @@ install:
 
 script:
  - dotnet build
+ - dotnet test test/Wavefront.AppMetrics.SDK.CSharp.Test/Wavefront.AppMetrics.SDK.CSharp.Test.csproj
