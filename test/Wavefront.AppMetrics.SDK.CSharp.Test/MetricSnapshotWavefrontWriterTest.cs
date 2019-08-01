@@ -44,6 +44,8 @@ namespace Wavefront.AppMetrics.SDK.CSharp.Test
             Assert.Contains("globalKey2", filteredTags);
             Assert.Contains("env", filteredTags);
             Assert.Contains("location", filteredTags);
+            // Verify that point tag value overrides global tag value
+            Assert.Equal("pointValue1", filteredTags["globalKey1"]);
         }
     }
 }
