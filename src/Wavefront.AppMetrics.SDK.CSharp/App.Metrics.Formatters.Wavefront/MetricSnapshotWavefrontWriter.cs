@@ -278,13 +278,23 @@ namespace App.Metrics.Formatters.Wavefront
             return string.Join(".", components);
         }
 
-        private Dictionary<string, string> FilterTags(MetricTags tags)
+        /// <summary>
+        /// Returns a dictionary of point and global tags that are to be sent to Wavefront.
+        /// Visible for testing only.
+        /// </summary>
+        /// <param name="tags">Metric point tags.</param>
+        /// <returns>A dictionary of all tags to be sent to Wavefront.</returns>
+        internal Dictionary<string, string> FilterTags(MetricTags tags)
         {
             var tagsDict = globalTags == null ? new Dictionary<string, string>() :
                 new Dictionary<string, string>(globalTags);
-            foreach (var tag in tags.ToDictionary().Where(tag => !TagsToExclude.Contains(tag.Key)))
+            for (int i = 0; i < tags.Keys.Length; i++)
             {
-                tagsDict[tag.Key] = tag.Value;
+                string key = tags.Keys[i];
+                if (!TagsToExclude.Contains(key))
+                {
+                    tagsDict[key] = tags.Values[i];
+                }
             }
             return tagsDict;
         }
