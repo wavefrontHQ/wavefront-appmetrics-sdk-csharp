@@ -1,4 +1,5 @@
 ﻿using App.Metrics.Filters;
+using Microsoft.Extensions.Logging;
 using System;
 using Wavefront.SDK.CSharp.Common;
 using Wavefront.SDK.CSharp.Common.Application;
@@ -54,5 +55,11 @@ namespace App.Metrics.Reporting.Wavefront
         /// </summary>
         /// <value>The application tags.</value>
         public ApplicationTags ApplicationTags { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the logger factory used to create internal loggers for Wavefront
+        ///     reporting.
+        /// </summary>
+        public ILoggerFactory LoggerFactory { get; set; }
     }
 }
