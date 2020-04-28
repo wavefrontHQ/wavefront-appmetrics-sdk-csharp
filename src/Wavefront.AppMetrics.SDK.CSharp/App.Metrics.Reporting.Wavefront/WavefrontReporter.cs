@@ -84,11 +84,15 @@ namespace App.Metrics.Reporting.Wavefront
             // Formatting will be handled by the Wavefront sender.
             Formatter = null;
 
-            sdkMetricsRegistry = new WavefrontSdkMetricsRegistry.Builder(wavefrontSender)
+            var registryBuilder = new WavefrontSdkMetricsRegistry.Builder(wavefrontSender)
                 .Prefix(Constants.SdkMetricPrefix + ".app_metrics")
                 .Source(source)
-                .Tags(globalTags)
-                .Build();
+                .Tags(globalTags);
+            if (options.LoggerFactory != null)
+            {
+                registryBuilder.LoggerFactory(options.LoggerFactory);
+            }
+            sdkMetricsRegistry = registryBuilder.Build();
 
             reporterErrors = sdkMetricsRegistry.Counter("reporter.errors");
 
