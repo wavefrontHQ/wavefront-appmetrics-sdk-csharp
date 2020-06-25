@@ -15,7 +15,15 @@
     <RepositoryUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</RepositoryUrl>
     <PackageTags>Wavefront;VMware;appmetrics;metrics;reporting</PackageTags>
     <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v2.4.0</PackageReleaseNotes>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
