@@ -25,6 +25,7 @@ namespace App.Metrics.Reporting.Wavefront
         private readonly string source;
         private readonly IDictionary<string, string> globalTags;
         private readonly ISet<HistogramGranularity> histogramGranularities;
+        private readonly MetricFields metricFields;
         private readonly WavefrontSdkMetricsRegistry sdkMetricsRegistry;
 
         private readonly WavefrontSdkCounter reporterErrors;
@@ -83,6 +84,8 @@ namespace App.Metrics.Reporting.Wavefront
 
             // Formatting will be handled by the Wavefront sender.
             Formatter = null;
+
+            metricFields = options.MetricFields ?? new MetricFields();
 
             var registryBuilder = new WavefrontSdkMetricsRegistry.Builder(wavefrontSender)
                 .Prefix(Constants.SdkMetricPrefix + ".app_metrics")
@@ -144,6 +147,8 @@ namespace App.Metrics.Reporting.Wavefront
         /// </param>
         /// <param name="cancellationToken">The <see cref="CancellationToken" /></param>
         /// <returns>A <see cref="Task" /> representing the asynchronous write operation.</returns>
+
+#if NET452
         private Task WriteAsync(
             MetricsDataValueSource metricsData,
             CancellationToken cancellationToken = default)
@@ -151,12 +156,24 @@ namespace App.Metrics.Reporting.Wavefront
             var serializer = new MetricSnapshotSerializer();
 
             using (var writer = new MetricSnapshotWavefrontWriter(wavefrontSender, source,
-                globalTags, histogramGranularities, sdkMetricsRegistry))
+                globalTags, histogramGranularities, sdkMetricsRegistry, metricFields))
             {
-                serializer.Serialize(writer, metricsData);
+                serializer.Serialize(writer, metricsData, metricFields);
             }
 
             return AppMetricsTaskHelper.CompletedTask();
         }
+#else
+        private async Task WriteAsync(
+            MetricsDataValueSource metricsData,
+            CancellationToken cancellationToken = default)
+        {
+            var serializer = new MetricSnapshotSerializer();
+
+            await using var writer = new MetricSnapshotWavefrontWriter(wavefrontSender, source,
+                globalTags, histogramGranularities, sdkMetricsRegistry, metricFields);
+            serializer.Serialize(writer, metricsData, metricFields);
+        }
+#endif
     }
 }
