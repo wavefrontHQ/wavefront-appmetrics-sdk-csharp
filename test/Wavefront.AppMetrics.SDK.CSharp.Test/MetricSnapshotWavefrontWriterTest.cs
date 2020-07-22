@@ -28,7 +28,7 @@ namespace Wavefront.AppMetrics.SDK.CSharp.Test
             };
             var sdkMetricsRegistry = new WavefrontSdkMetricsRegistry.Builder(wfSender).Build();
             writer = new MetricSnapshotWavefrontWriter(wfSender, "source", globalTags,
-                histogramGranularities, sdkMetricsRegistry);
+                histogramGranularities, sdkMetricsRegistry, new MetricFields());
         }
 
         [Fact]

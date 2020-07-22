@@ -61,5 +61,10 @@ namespace App.Metrics.Reporting.Wavefront
         ///     reporting.
         /// </summary>
         public ILoggerFactory LoggerFactory { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the <see cref="Metrics.MetricFields" /> to use for just this reporter.
+        /// </summary>
+        public MetricFields MetricFields { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using App.Metrics.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wavefront.SDK.CSharp.Common;
 using Wavefront.SDK.CSharp.Common.Metrics;
 using Wavefront.SDK.CSharp.Entities.Histograms;
@@ -25,6 +26,7 @@ namespace App.Metrics.Formatters.Wavefront
         private readonly string source;
         private readonly IDictionary<string, string> globalTags;
         private readonly ISet<HistogramGranularity> histogramGranularities;
+        private readonly MetricFields fields;
 
         private readonly WavefrontSdkCounter gaugesReported;
         private readonly WavefrontSdkCounter deltaCountersReported;
@@ -41,12 +43,14 @@ namespace App.Metrics.Formatters.Wavefront
             string source,
             IDictionary<string, string> globalTags,
             ISet<HistogramGranularity> histogramGranularities,
-            WavefrontSdkMetricsRegistry sdkMetricsRegistry)
+            WavefrontSdkMetricsRegistry sdkMetricsRegistry,
+            MetricFields fields)
         {
             this.wavefrontSender = wavefrontSender;
             this.source = source;
             this.globalTags = globalTags;
             this.histogramGranularities = histogramGranularities;
+            this.fields = fields;
 
             gaugesReported = sdkMetricsRegistry.Counter("gauges.reported");
             deltaCountersReported = sdkMetricsRegistry.Counter("delta_counters.reported");
@@ -57,18 +61,12 @@ namespace App.Metrics.Formatters.Wavefront
             timersReported = sdkMetricsRegistry.Counter("timers.reported");
             apdexesReported = sdkMetricsRegistry.Counter("apdexes.reported");
             writerErrors = sdkMetricsRegistry.Counter("writer.errors");
-
-            MetricNameMapping = new GeneratedMetricNameMapping();
         }
 
-        /// <inheritdoc />
-        public GeneratedMetricNameMapping MetricNameMapping { get; } =
-            new GeneratedMetricNameMapping();
-
-        public void Write(string context, string name, object value,
+        public void Write(string context, string name, string field, object value,
                           MetricTags tags, DateTime timestamp)
         {
-            Write(context, name, new[] { "value" }, new[] { value }, tags, timestamp);
+            Write(context, name, new[] { field }, new[] { value }, tags, timestamp);
         }
 
         /// <inheritdoc />
@@ -85,17 +83,17 @@ namespace App.Metrics.Formatters.Wavefront
             {
                 string metricTypeValue =
                     tags.Values[Array.IndexOf(tags.Keys, Pack.MetricTagsTypeKey)];
-                var fields = columns.Zip(values, (column, data) => new { column, data })
-                                    .ToDictionary(pair => pair.column, pair => pair.data);
+                var data = columns.Zip(values, (column, value) => new { column, value })
+                                    .ToDictionary(pair => pair.column, pair => pair.value);
 
                 if (metricTypeValue == Pack.ApdexMetricTypeValue)
                 {
-                    WriteApdex(context, name, fields, tags, timestamp);
+                    WriteApdex(context, name, data, tags, timestamp);
                     apdexesReported.Inc();
                 }
                 else if (metricTypeValue == Pack.CounterMetricTypeValue)
                 {
-                    WriteCounter(context, name, fields, tags, timestamp);
+                    WriteCounter(context, name, data, tags, timestamp);
                     if (DeltaCounterOptions.IsDeltaCounter(tags))
                     {
                         deltaCountersReported.Inc();
@@ -107,12 +105,12 @@ namespace App.Metrics.Formatters.Wavefront
                 }
                 else if (metricTypeValue == Pack.GaugeMetricTypeValue)
                 {
-                    WriteGauge(context, name, fields, tags, timestamp);
+                    WriteGauge(context, name, data, tags, timestamp);
                     gaugesReported.Inc();
                 }
                 else if (metricTypeValue == Pack.HistogramMetricTypeValue)
                 {
-                    WriteHistogram(context, name, fields, tags, timestamp);
+                    WriteHistogram(context, name, data, tags, timestamp);
                     if (WavefrontHistogramOptions.IsWavefrontHistogram(tags))
                     {
                         wfHistogramsReported.Inc();
@@ -124,13 +122,13 @@ namespace App.Metrics.Formatters.Wavefront
                 }
                 else if (metricTypeValue == Pack.MeterMetricTypeValue)
                 {
-                    WriteMeter(context, name, fields, tags, timestamp);
+                    WriteMeter(context, name, data, tags, timestamp);
                     metersReported.Inc();
                 }
                 else if (metricTypeValue == Pack.TimerMetricTypeValue)
                 {
-                    WriteMeter(context, name, fields, tags, timestamp);
-                    WriteHistogram(context, name, fields, tags, timestamp);
+                    WriteMeter(context, name, data, tags, timestamp);
+                    WriteHistogram(context, name, data, tags, timestamp);
                     timersReported.Inc();
                 }
             }
@@ -141,36 +139,34 @@ namespace App.Metrics.Formatters.Wavefront
             }
         }
 
-        private void WriteApdex(string context, string name, IDictionary<string, object> fields,
+        private void WriteApdex(string context, string name, IDictionary<string, object> data,
                                 MetricTags tags, DateTime timestamp)
         {
-            foreach (var entry in MetricNameMapping.Apdex)
+            foreach (var field in fields.Apdex)
             {
-                if (fields.ContainsKey(entry.Value))
+                if (data.ContainsKey(field.Value))
                 {
-                    Write(context, name, entry.Value, fields[entry.Value], tags, timestamp);
+                    WriteInternal(context, name, field.Value, data[field.Value], tags, timestamp);
                 }
             }
         }
 
-        private void WriteCounter(string context, string name, IDictionary<string, object> fields,
+        private void WriteCounter(string context, string name, IDictionary<string, object> data,
                                   MetricTags tags, DateTime timestamp)
         {
             bool isDeltaCounter = DeltaCounterOptions.IsDeltaCounter(tags);
 
-            var metricNames = MetricNameMapping.Counter.Values.Union(new string[] {"value"});
-
-            foreach (string metricName in metricNames)
+            foreach (var field in fields.Counter)
             {
-                if (fields.ContainsKey(metricName))
+                if (data.ContainsKey(field.Value))
                 {
-                    var suffix = metricName.Equals("value") ? "count" : metricName;
+                    var suffix = field.Value.Equals("value") ? "count" : field.Value;
                     // Report delta counters using an API that is specific to delta counters.
                     if (isDeltaCounter)
                     {
                         wavefrontSender.SendDeltaCounter(
                             Concat(context, name, suffix),
-                            Convert.ToDouble(fields[metricName]),
+                            Convert.ToDouble(data[field.Value]),
                             source,
                             FilterTags(tags)
                         );
@@ -178,39 +174,41 @@ namespace App.Metrics.Formatters.Wavefront
                     }
                     else
                     {
-                        Write(context, name, suffix, fields[metricName], tags, timestamp);
+                        WriteInternal(context, name, suffix, data[field.Value], tags, timestamp);
                     }
                 }
             }
         }
 
-        private void WriteGauge(string context, string name, IDictionary<string, object> fields,
+        private void WriteGauge(string context, string name, IDictionary<string, object> data,
                                 MetricTags tags, DateTime timestamp)
         {
-            Write(context, name, "value", fields["value"], tags, timestamp);
+            foreach (var field in fields.Gauge)
+            {
+                if (data.ContainsKey(field.Value))
+                {
+                    WriteInternal(context, name, field.Value, data[field.Value], tags, timestamp);
+                }
+            }
         }
 
-        private void WriteHistogram(string context, string name, IDictionary<string, object> fields,
+        private void WriteHistogram(string context, string name, IDictionary<string, object> data,
                                     MetricTags tags, DateTime timestamp)
         {
-            bool isWavefrontHistogram = WavefrontHistogramOptions.IsWavefrontHistogram(tags);
-
             // Report Wavefront Histograms using an API that is specific to Wavefront Histograms.
-            if (isWavefrontHistogram)
+            if (WavefrontHistogramOptions.IsWavefrontHistogram(tags))
             {
                 name = Concat(context, name);
 
                 // Wavefront Histograms are reported as a distribution, so we must extract the
                 // distribution from a HistogramValue that is carrying it in a serialized format.
-                string keyFieldName =
-                    MetricNameMapping.Histogram[HistogramValueDataKeys.UserMaxValue];
-                string valueFieldName =
-                    MetricNameMapping.Histogram[HistogramValueDataKeys.UserMinValue];
+                string keyFieldName = fields.Histogram[HistogramFields.UserMaxValue];
+                string valueFieldName = fields.Histogram[HistogramFields.UserMinValue];
 
-                if (fields.ContainsKey(keyFieldName) && fields.ContainsKey(valueFieldName))
+                if (data.ContainsKey(keyFieldName) && data.ContainsKey(valueFieldName))
                 {
-                    string key = (string)fields[keyFieldName];
-                    string value = (string)fields[valueFieldName];
+                    string key = (string)data[keyFieldName];
+                    string value = (string)data[valueFieldName];
 
                     // Deserialize the distributions into the right format for reporting.
                     var distributions = WavefrontHistogramImpl.Deserialize(
@@ -231,38 +229,39 @@ namespace App.Metrics.Formatters.Wavefront
             }
             else
             {
-                foreach (var entry in MetricNameMapping.Histogram)
+                foreach (var field in fields.Histogram)
                 {
                     // Do not report non-numerical metrics
-                    if (entry.Key == HistogramValueDataKeys.UserLastValue ||
-                        entry.Key == HistogramValueDataKeys.UserMaxValue ||
-                        entry.Key == HistogramValueDataKeys.UserMinValue)
+                    if (field.Key == HistogramFields.UserLastValue ||
+                        field.Key == HistogramFields.UserMaxValue ||
+                        field.Key == HistogramFields.UserMinValue)
                     {
                         continue;
                     }
 
-                    if (fields.ContainsKey(entry.Value))
+                    if (data.ContainsKey(field.Value))
                     {
-                        Write(context, name, entry.Value, fields[entry.Value], tags, timestamp);
+                        WriteInternal(context, name, field.Value, data[field.Value], tags,
+                            timestamp);
                     }
                 }
             }
         }
 
-        private void WriteMeter(string context, string name, IDictionary<string, object> fields,
+        private void WriteMeter(string context, string name, IDictionary<string, object> data,
                                 MetricTags tags, DateTime timestamp)
         {
-            foreach (var entry in MetricNameMapping.Meter)
+            foreach (var field in fields.Meter)
             {
-                if (fields.ContainsKey(entry.Value))
+                if (data.ContainsKey(field.Value))
                 {
-                    Write(context, name, entry.Value, fields[entry.Value], tags, timestamp);
+                    WriteInternal(context, name, field.Value, data[field.Value], tags, timestamp);
                 }
             }
         }
 
-        private void Write(string context, string name, string suffix, object value,
-                           MetricTags tags, DateTime timestamp)
+        private void WriteInternal(string context, string name, string suffix, object value,
+                                   MetricTags tags, DateTime timestamp)
         {
             wavefrontSender.SendMetric(Concat(context, name, suffix),
                                        Convert.ToDouble(value),
@@ -302,5 +301,12 @@ namespace App.Metrics.Formatters.Wavefront
         public void Dispose()
         {
         }
+
+#if !NET452
+        public ValueTask DisposeAsync()
+        {
+            return default;
+        }
+#endif
     }
 }

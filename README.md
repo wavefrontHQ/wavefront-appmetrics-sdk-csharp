@@ -75,6 +75,8 @@ The Wavefront reporter has the following configuration options:
 |Filter|The IFilterMetrics that will be used by this reporter for filtering metrics.|N|
 |FlushInterval|The interval between flushing metrics.|N|
 |ApplicationTags|Metadata about your application that will be reported to Wavefront as point tags.|N|
+|LoggerFactory|The ILoggerFactory that will be used to create internal loggers for this reporter.|N|
+|MetricFields|Apply a custom MetricFields to rename or filter the default metrics.|N|
 
 ### 4. Build an IMetrics Instance
 After configuring the builder to report to Wavefront, we're ready to build our `IMetrics` instance.
