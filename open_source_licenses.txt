@@ -1,6 +1,6 @@
 open_source_licenses.txt
 
-Wavefront by VMware App Metrics SDK for C# 2.4.0 GA
+Wavefront by VMware App Metrics SDK for C# 3.0.0 GA
 
 ======================================================================
 
@@ -28,6 +28,8 @@ of the license associated with each component.
 SECTION 1: Apache License, V2.0
 
    >>> App.Metrics-2.0.0
+   >>> App.Metrics-3.0.0
+   >>> App.Metrics-4.0.0
    >>> Microsoft.Extensions.Logging-2.0.0
    >>> Microsoft.Extensions.Logging.Debug-2.0.0
 
@@ -52,6 +54,14 @@ Apache License, V2.0 is applicable to the following component(s).
 
 
 >>> App.Metrics-2.0.0
+
+License: Apache 2.0
+
+>>> App.Metrics-3.0.0
+
+License: Apache 2.0
+
+>>> App.Metrics-4.0.0
 
 License: Apache 2.0
 
@@ -157,6 +167,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+> MIT
 
 >>> TDigest-1.0.6
 
@@ -518,7 +530,19 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
+> BSD-2
 
+
+
+> BSD-3
+
+
+
+> MIT
+
+
+
+> PublicDomain
 
 =============== APPENDIX. Standard License Files ============== 
 
@@ -719,4 +743,4 @@ Source Files is valid for three years from the date you acquired or last used th
 Software product. Alternatively, the Source Files may accompany the
 VMware service.
 
-[WAVEFRONTAPPMETRICSSDKCSHARP240GAAB042920]
+[WAVEFRONTAPPMETRICSSDKCSHARP300GANT072320]

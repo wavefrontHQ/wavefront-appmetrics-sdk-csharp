@@ -14,11 +14,11 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</RepositoryUrl>
     <PackageTags>Wavefront;VMware;appmetrics;metrics;reporting</PackageTags>
-    <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v2.4.0</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v3.0.0</PackageReleaseNotes>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.5.0" />
+    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <PackageReference Include="App.Metrics" Version="3.0.0" />
