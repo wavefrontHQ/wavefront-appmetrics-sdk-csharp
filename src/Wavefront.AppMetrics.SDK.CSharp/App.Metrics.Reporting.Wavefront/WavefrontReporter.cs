@@ -6,6 +6,7 @@ using App.Metrics.Logging;
 using App.Metrics.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Wavefront.SDK.CSharp.Common;
@@ -98,6 +99,9 @@ namespace App.Metrics.Reporting.Wavefront
             sdkMetricsRegistry = registryBuilder.Build();
 
             reporterErrors = sdkMetricsRegistry.Counter("reporter.errors");
+
+            double sdkVersion = Utils.GetSemVer(Assembly.GetExecutingAssembly());
+            sdkMetricsRegistry.Gauge("version", () => sdkVersion);
 
             Logger.Info($"Using Wavefront Reporter {this}. FlushInterval: {FlushInterval}");
         }
