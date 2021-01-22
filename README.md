@@ -45,9 +45,9 @@ You can optionally configure `IMetrics` using configuration options that can be 
 ### 2. Set Up an IWavefrontSender
 An `IWavefrontSender` object implements the low-level interface for sending data to Wavefront. You can choose to send data to Wavefront using either the [Wavefront proxy](https://docs.wavefront.com/proxies.html) or [direct ingestion](https://docs.wavefront.com/direct_ingestion.html).
 
-* See [Set Up an IWavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-csharp/blob/master/README.md#set-up-an-iwavefrontsender) for details on instantiating a proxy or direct ingestion client.
+* See [Set Up an IWavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-doc-sources/blob/master/csharp/wavefrontsender.md#set-up-an-iwavefrontsender-instance) for details on instantiating a proxy or direct ingestion client.
 
-**Note:** If you are using multiple Wavefront C# SDKs, see [Sharing an IWavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-csharp/blob/master/docs/sender.md) for information about sharing a single `IWavefrontSender` instance across SDKs.
+**Note:** If you are using multiple Wavefront C# SDKs, see [Sharing an IWavefrontSender](https://github.com/wavefrontHQ/wavefront-sdk-doc-sources/blob/master/csharp/wavefrontsender.md#share-an-iwavefrontsender-instance) for information about sharing a single `IWavefrontSender` instance across SDKs.
 
 ### 3. Configure Reporting to Wavefront
 To enable reporting of metrics and histograms to Wavefront, you must configure the `MetricsBuilder` to use the `IWavefrontSender`.
