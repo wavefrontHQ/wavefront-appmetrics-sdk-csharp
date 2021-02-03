@@ -28,15 +28,15 @@ namespace App.Metrics.Formatters.Wavefront
         private readonly ISet<HistogramGranularity> histogramGranularities;
         private readonly MetricFields fields;
 
-        private readonly WavefrontSdkCounter gaugesReported;
-        private readonly WavefrontSdkCounter deltaCountersReported;
-        private readonly WavefrontSdkCounter countersReported;
-        private readonly WavefrontSdkCounter wfHistogramsReported;
-        private readonly WavefrontSdkCounter histogramsReported;
-        private readonly WavefrontSdkCounter metersReported;
-        private readonly WavefrontSdkCounter timersReported;
-        private readonly WavefrontSdkCounter apdexesReported;
-        private readonly WavefrontSdkCounter writerErrors;
+        private readonly WavefrontSdkDeltaCounter gaugesReported;
+        private readonly WavefrontSdkDeltaCounter deltaCountersReported;
+        private readonly WavefrontSdkDeltaCounter countersReported;
+        private readonly WavefrontSdkDeltaCounter wfHistogramsReported;
+        private readonly WavefrontSdkDeltaCounter histogramsReported;
+        private readonly WavefrontSdkDeltaCounter metersReported;
+        private readonly WavefrontSdkDeltaCounter timersReported;
+        private readonly WavefrontSdkDeltaCounter apdexesReported;
+        private readonly WavefrontSdkDeltaCounter writerErrors;
 
         public MetricSnapshotWavefrontWriter(
             IWavefrontSender wavefrontSender,
@@ -52,15 +52,15 @@ namespace App.Metrics.Formatters.Wavefront
             this.histogramGranularities = histogramGranularities;
             this.fields = fields;
 
-            gaugesReported = sdkMetricsRegistry.Counter("gauges.reported");
-            deltaCountersReported = sdkMetricsRegistry.Counter("delta_counters.reported");
-            countersReported = sdkMetricsRegistry.Counter("counters.reported");
-            wfHistogramsReported = sdkMetricsRegistry.Counter("wavefront_histograms.reported");
-            histogramsReported = sdkMetricsRegistry.Counter("histograms.reported");
-            metersReported = sdkMetricsRegistry.Counter("meters.reported");
-            timersReported = sdkMetricsRegistry.Counter("timers.reported");
-            apdexesReported = sdkMetricsRegistry.Counter("apdexes.reported");
-            writerErrors = sdkMetricsRegistry.Counter("writer.errors");
+            gaugesReported = sdkMetricsRegistry.DeltaCounter("gauges.reported");
+            deltaCountersReported = sdkMetricsRegistry.DeltaCounter("delta_counters.reported");
+            countersReported = sdkMetricsRegistry.DeltaCounter("counters.reported");
+            wfHistogramsReported = sdkMetricsRegistry.DeltaCounter("wavefront_histograms.reported");
+            histogramsReported = sdkMetricsRegistry.DeltaCounter("histograms.reported");
+            metersReported = sdkMetricsRegistry.DeltaCounter("meters.reported");
+            timersReported = sdkMetricsRegistry.DeltaCounter("timers.reported");
+            apdexesReported = sdkMetricsRegistry.DeltaCounter("apdexes.reported");
+            writerErrors = sdkMetricsRegistry.DeltaCounter("writer.errors");
         }
 
         public void Write(string context, string name, string field, object value,

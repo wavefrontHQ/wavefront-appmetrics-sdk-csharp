@@ -18,7 +18,7 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.6.0" />
+    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.7.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <PackageReference Include="App.Metrics" Version="3.0.0" />
