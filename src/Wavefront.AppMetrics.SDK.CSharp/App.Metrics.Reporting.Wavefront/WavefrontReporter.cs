@@ -29,7 +29,7 @@ namespace App.Metrics.Reporting.Wavefront
         private readonly MetricFields metricFields;
         private readonly WavefrontSdkMetricsRegistry sdkMetricsRegistry;
 
-        private readonly WavefrontSdkCounter reporterErrors;
+        private readonly WavefrontSdkDeltaCounter reporterErrors;
 
         public WavefrontReporter(MetricsReportingWavefrontOptions options)
         {
@@ -98,7 +98,7 @@ namespace App.Metrics.Reporting.Wavefront
             }
             sdkMetricsRegistry = registryBuilder.Build();
 
-            reporterErrors = sdkMetricsRegistry.Counter("reporter.errors");
+            reporterErrors = sdkMetricsRegistry.DeltaCounter("reporter.errors");
 
             double sdkVersion = Utils.GetSemVer(Assembly.GetExecutingAssembly());
             sdkMetricsRegistry.Gauge("version", () => sdkVersion);
