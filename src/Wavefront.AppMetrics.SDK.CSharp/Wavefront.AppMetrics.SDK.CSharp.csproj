@@ -1,30 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net452;net461</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <NoWarn>NU1701</NoWarn>
     <PackageId>Wavefront.AppMetrics.SDK.CSharp</PackageId>
-    <Version>3.1.0</Version>
+    <Version>3.2.0-beta</Version>
     <Title>Wavefront by VMware App Metrics SDK for C#</Title>
-    <Authors>Wavefront</Authors>
+    <Authors>VMware</Authors>
     <Description>This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.</Description>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp</RepositoryUrl>
-    <PackageTags>Wavefront;VMware;appmetrics;metrics;reporting</PackageTags>
-    <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v3.1.0</PackageReleaseNotes>
+    <PackageTags>Wavefront;VMware;Tanzu;Tanzu Observability;appmetrics;metrics;reporting</PackageTags>
+    <PackageReleaseNotes>https://github.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp/releases/tag/v3.2.0-beta</PackageReleaseNotes>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.7.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <PackageReference Include="App.Metrics" Version="3.0.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' or '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="App.Metrics" Version="4.0.0" />
+    <PackageReference Include="Wavefront.SDK.CSharp" Version="1.8.0-beta" />
+    <PackageReference Include="App.Metrics" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App.Metrics\" />
