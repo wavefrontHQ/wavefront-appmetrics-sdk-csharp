@@ -3,7 +3,6 @@
 This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.
 
 ## Frameworks Supported
-  * .NET Framework (>= 4.5.2)
   * .NET Standard (>= 2.0)
 
 ## Installation
