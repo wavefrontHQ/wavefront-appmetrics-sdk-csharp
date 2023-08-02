@@ -1,4 +1,8 @@
-# Wavefront App Metrics Reporter [![travis build status](https://travis-ci.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp.svg?branch=master)](https://travis-ci.com/wavefrontHQ/wavefront-appmetrics-sdk-csharp) [![NuGet](https://img.shields.io/nuget/v/Wavefront.AppMetrics.SDK.CSharp.svg)](https://www.nuget.org/packages/Wavefront.AppMetrics.SDK.CSharp)
+> **Warning**
+>
+> VMware has ended active development of this project. this repository will no longer be updated.
+
+# Wavefront App Metrics Reporter [![NuGet](https://img.shields.io/nuget/v/Wavefront.AppMetrics.SDK.CSharp.svg)](https://www.nuget.org/packages/Wavefront.AppMetrics.SDK.CSharp)
 
 This package provides support for reporting metrics recorded by App Metrics to Wavefront via proxy or direct ingestion.
 
